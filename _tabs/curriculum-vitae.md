@@ -63,6 +63,10 @@ Missouri University of Science and Technology
 
 ---
 
+# Certificates
+**Quantum Sciences, Networking, and Communications" (2025)
+University of Chicago
+
 # Skills
 **Programming:** Python (numpy, scipy, pandas, matlplotlib), Fortran, C++, High-performance computing (MPI, Torque, Slurm), Linux/Unix systems, Machine learning (scikit-learn, keras), git/github
 
