@@ -16,7 +16,7 @@ Associate Manager, Intellectual Property
 <i class="fa fa-external-link"></i> [LinkedIn](https://www.linkedin.com/in/jack-crewse-iii) \|
 [GitHub](https://github.com/Jcrewse) \| [Google Scholar](https://scholar.google.com/citations?user=SkU8oqoAAAAJ&hl=en)
 
-<i class="fa fa-file-text"></i> [Curriculum Vitae](https://jcrewse.github.io/curriculum-vitae/) 
+<i class="fa fa-file-text"></i> [Curriculum Vitae](https://jcrewse.github.io/curriculum-vitae/) [PDF (updated Oct. '22)]({{ '/assets/cv/crewse_cv.pdf' | relative_url }}){: .btn .btn-primary .mt-3 target="_blank" rel="noopener"}
 
 
 ## <span style="color:Green">Professional Interests</span>
