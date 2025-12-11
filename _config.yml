@@ -18,9 +18,9 @@ timezone: America/Chicago
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Jack Crewse                          # the main title
+title: Jack Crewse, PhD                          # the main title
 
-tagline: IP Manager  Computational Physicist  Musician/Artist  # it will display as the sub-title
+tagline: Physicist, Programmer, Musician, Artist # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   The personal web page of Jack Crewse. 
