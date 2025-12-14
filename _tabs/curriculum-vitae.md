@@ -5,6 +5,7 @@ order: 2
 math: true
 toc: true
 ---
+# [PDF (updated Oct. '22)]({{ '/assets/JackCrewseCV.pdf' | relative_url }}){: .btn .btn-primary .btn-sm .mt-3 target="_blank" rel="noopener"}
 
 # Experience
 **Associate Manager, Intellectual Property and Technology Development** (Oct. 2023 - present)
