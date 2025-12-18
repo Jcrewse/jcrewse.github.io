@@ -59,7 +59,7 @@ toc: true
 # Education
 **Ph.D Physics** (2024)  
 Missouri University of Science and Technology  
-Dissertation: ["Quantum Critical Behavior and Dynamics of the Superfluid-Mott Glass Transition"]({{ '/assets/crewse_thesis.pdf' | relative_url }})
+Dissertation: ["Quantum Critical Behavior and Dynamics of the Superfluid-Mott Glass Transition"]({{ '/assets/crewse_thesis.pdf' | relative_url }}){rel="noopener"}
 
 **B.S Physics** (2015)  
 Missouri University of Science and Technology
