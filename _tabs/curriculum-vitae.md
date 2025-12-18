@@ -5,6 +5,7 @@ order: 2
 math: true
 toc: true
 ---
+
 # [PDF (updated Oct. '22)]({{ '/assets/JackCrewseCV.pdf' | relative_url }}){: .btn .btn-primary .btn-sm .mt-3 target="_blank" rel="noopener"}
 
 # Experience
@@ -13,6 +14,7 @@ toc: true
 *University of Chicago*
 
 - Managed patent filing, prosecution, and maintanence for technologies coming out of the computer science and physics departments (~75 PIs, ~200 technologies)
+- 
 
 **Postdoctoral Appointee** (Aug. 2022 - Oct. 2023)  
 *Center for Nanoscale Materials*  
@@ -57,7 +59,7 @@ toc: true
 # Education
 **Ph.D Physics** (2024)  
 Missouri University of Science and Technology  
-Dissertation: "Quantum Critical Behavior and Dynamics of the Superfluid-Mott Glass Transition"
+Dissertation: ["Quantum Critical Behavior and Dynamics of the Superfluid-Mott Glass Transition"]({{ '/assets/crewse_thesis.pdf' | relative_url }})
 
 **B.S Physics** (2015)  
 Missouri University of Science and Technology
