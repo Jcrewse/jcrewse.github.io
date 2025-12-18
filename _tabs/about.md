@@ -4,15 +4,16 @@ icon: fas fa-id-card
 order: 1
 ---
 
-![Desktop View](../assets/img/polsky-headshot-close.jpg){: width="500" .w-25 .right}
+![Desktop View](../assets/img/polsky-headshot-close.jpg){: width="750" .w-25 .right}
 ## Jack R. Crewse III, Ph.D. 
 
 Associate Manager, Intellectual Property  
-[Polsky Center for Entrepreneuship and Innovation  ](https://polsky.uchicago.edu)  
+[Polsky Center for Entrepreneuship and Innovation](https://polsky.uchicago.edu)  
 <span style="color:#800000">University of Chicago</span>  
 
 <i class="fa fa-map-marker"></i> Oak Park, IL  
-<i class="fa fa-envelope"></i> [jcrewseiii@gmail.com](mailto:jcrewseiii@gmail.com)  
+<i class="fa fa-envelope"></i> [jcrewseiii@gmail.com](mailto:jcrewseiii@gmail.com)
+<i class="fa fa-envelope"></i> [jcrewse@uchicago.edu](mailto:jcrewse@uchicago.edu)  
 <i class="fa fa-external-link"></i> [LinkedIn](https://www.linkedin.com/in/jack-crewse-iii) \|
 [GitHub](https://github.com/Jcrewse) \| [Google Scholar](https://scholar.google.com/citations?user=SkU8oqoAAAAJ&hl=en)
 
