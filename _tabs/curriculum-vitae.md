@@ -58,7 +58,6 @@ toc: true
  - Guided extracurricular one-on-one tutoring sessions
 
 ---
-
 # Education
 **Ph.D Physics** (2024)  
 Missouri University of Science and Technology  
@@ -68,11 +67,11 @@ Dissertation: ["Quantum Critical Behavior and Dynamics of the Superfluid-Mott Gl
 Missouri University of Science and Technology
 
 ---
-
 # Certificates
-[''Quantum Sciences, Networking, and Communications"](https://credentials.professional.uchicago.edu/885f3cfd-53d4-4058-b205-3c981fe6dbec#acc.ZM1BADfL){:target="_blank"} (2025)
+[''Quantum Sciences, Networking, and Communications"](https://credentials.professional.uchicago.edu/885f3cfd-53d4-4058-b205-3c981fe6dbec#acc.ZM1BADfL){:target="_blank"} (2025)  
 University of Chicago
 
+---
 # Skills
 **Programming:** Python (numpy, scipy, pandas, matlplotlib), Fortran, C++, High-performance computing (MPI, Torque, Slurm), Linux/Unix systems, Machine learning (scikit-learn, keras), git/github
 
@@ -81,7 +80,6 @@ University of Chicago
 **Other:** $\LaTeX$
 
 ---
-
 # Publications
 **"Localization of the Higgs mode at the superfluid-Mott glass transition"**  
 ***J. Crewse**, T. Vojta* (2021)  
@@ -107,6 +105,7 @@ University of Chicago
 *T. Vojta, **J. Crewse**, M. Puschmann, D. Arovas, Y. Kiselev*  
 [Physical Review B **94**, 134501](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.134501){:target="_blank"}
 
+---
 # Conferences
 ["Quantum Critical Behavior and Collective Modes Near The Superfluid-Mott Glass Transition"](https://www.anl.gov/postdoctoral-research-and-career-symposium){:target="_blank"}  
 *Argonne Postdoc Research and Career Symposium 2022*
@@ -132,6 +131,7 @@ University of Chicago
 ["Quantum critical behavior of the superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR17/Session/A20.9){:target="_blank"}  
 *APS March Meeting 2017*
 
+---
 # Awards
 - ["Schearer" Prize 2021](https://econnection.mst.edu/2019/01/two-ph-d-students-win-physics-prize/){:target="_blank"} (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
 "Localization of the Higgs mode near the superfluid-Mott glass quantum phase transiton"
@@ -139,7 +139,7 @@ University of Chicago
 - ["Schearer" Prize 2020](https://physics.mst.edu/media/academic/physics/documents/newsletter/MatterNMotion2021.pdf){:target="_blank"} (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
 "High-harmonic generation in Dirac metals: Application of the semiconductor-Bloch formalism to topological systems"  
 
-- ["Schearer" Prize 2018](https://physics.mst.edu/media/academic/physics/documents/newsletter/Matter_n_Motion2019_final.pdf{:target="_blank"} (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
+- ["Schearer" Prize 2018](https://physics.mst.edu/media/academic/physics/documents/newsletter/Matter_n_Motion2019_final.pdf){:target="_blank"} (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
 "Quantum Critical Behavior of a Three-Dimensional Superfluid-Mott Glass Transition"  
 
 - [Fuller Prize 2014](https://physics.mst.edu/media/academic/physics/documents/newsletter/Matter_n_Motion2015_final.pdf#180129090153){:target="_blank"} (2nd Place) - *Harold Q. Fuller Undergraduate Research Competition*  
