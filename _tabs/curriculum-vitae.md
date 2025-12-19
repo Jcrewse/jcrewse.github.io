@@ -13,8 +13,11 @@ toc: true
 *Polsky Center for Entrepreneurship and Innovation*  
 *University of Chicago*
 
-- Managed patent filing, prosecution, and maintanence for technologies coming out of the computer science and physics departments (~75 PIs, ~200 technologies)
-- 
+- Managed portfolio of over 250 different patents covering quantum computing, materials, and software related technologies developed by faculty
+- Evaluated technologies for patentability, commercial potential, and market interest
+- Lead efforts to overhaul software licensing strategies
+- Coached entreprenurial students in commercialization programs
+- Developed software tools for in-office metric analysis
 
 **Postdoctoral Appointee** (Aug. 2022 - Oct. 2023)  
 *Center for Nanoscale Materials*  
@@ -67,9 +70,8 @@ Missouri University of Science and Technology
 ---
 
 # Certificates
-''Quantum Sciences, Networking, and Communications" (2025)
+[''Quantum Sciences, Networking, and Communications"](https://credentials.professional.uchicago.edu/885f3cfd-53d4-4058-b205-3c981fe6dbec#acc.ZM1BADfL){:target="_blank"} (2025)
 University of Chicago
-[Certificate](https://credentials.professional.uchicago.edu/885f3cfd-53d4-4058-b205-3c981fe6dbec#acc.ZM1BADfL)
 
 # Skills
 **Programming:** Python (numpy, scipy, pandas, matlplotlib), Fortran, C++, High-performance computing (MPI, Torque, Slurm), Linux/Unix systems, Machine learning (scikit-learn, keras), git/github
@@ -83,64 +85,64 @@ University of Chicago
 # Publications
 **"Localization of the Higgs mode at the superfluid-Mott glass transition"**  
 ***J. Crewse**, T. Vojta* (2021)  
-[Physical Review B **104** (1), 014511](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.104.014511)
+[Physical Review B **104** (1), 014511](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.104.014511){:target="_blank"}
 
 **"Tunable non-integer high-harmonic generation in a topological insulator"**  
 *C.P. Schmid, L. Weigl, P. Grossing, V. Junk, C. Gorini, S. Schlauderer, S. Ito, M. Meierhofer, N. Mofmann, D. Afanasiec, **J. Crewse**, K. Koch, O.E. Tereshchenko, J. Gudde, F. Evers, J. Wilhelm, K. Richter, U. Hofer, R. Huber* (2021)  
-[Nature **593**, 385-390](https://www.nature.com/articles/s41586-021-03466-7)
+[Nature **593**, 385-390](https://www.nature.com/articles/s41586-021-03466-7){:target="_blank"}
 
 **"Semiconductor Bloch-equations formalism: Derivation and application to high-harmonic generation from Dirac fermions"**  
 *J. Wilhelm, P. Grossing, A. Seith, **J. Crewse**, M. Nitsch, C. Schmid, F. Evers* (2021)  
-[Physical Review B **103**, 125419](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.125419)
+[Physical Review B **103**, 125419](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.125419){:target="_blank"}
 
 **"Collective modes at a disordered quantum phase transition"**  
 *M. Puschmann, **J. Crewse**, J.A. Hoyos, T. Vojta* (2020)  
-[Physical Review Letters **125**, 127002](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.027002)
+[Physical Review Letters **125**, 127002](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.027002){:target="_blank"}
 
 **"Quantum critical behavior of a three-dimensional superfluid-Mott glass transition"**  
 ***J. Crewse** C. Lerch, T. Vojta* (2018)  
-[Physical Review B **98**, 054514](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.054514)
+[Physical Review B **98**, 054514](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.054514){:target="_blank"}
 
 **"Quantum critical behavior of the superfluid-Mott glass transition"**  
 *T. Vojta, **J. Crewse**, M. Puschmann, D. Arovas, Y. Kiselev*  
-[Physical Review B **94**, 134501](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.134501)
+[Physical Review B **94**, 134501](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.134501){:target="_blank"}
 
 # Conferences
-["Quantum Critical Behavior and Collective Modes Near The Superfluid-Mott Glass Transition"](https://www.anl.gov/postdoctoral-research-and-career-symposium)  
+["Quantum Critical Behavior and Collective Modes Near The Superfluid-Mott Glass Transition"](https://www.anl.gov/postdoctoral-research-and-career-symposium){:target="_blank"}  
 *Argonne Postdoc Research and Career Symposium 2022*
 
-["Localization of the Higgs mode at the superfluid-Mott glass quantum phase transition"](https://meetings.aps.org/Meeting/MAR22/Session/Y64.4)  
+["Localization of the Higgs mode at the superfluid-Mott glass quantum phase transition"](https://meetings.aps.org/Meeting/MAR22/Session/Y64.4){:target="_blank"}  
 *APS March Meeting 2022*
 
-["High-harmonic generation in Dirac metals: Application of the semiconductor-Bloch formalism to topological systems"](https://meetings.aps.org/Meeting/MAR21/Session/C51.11)   
+["High-harmonic generation in Dirac metals: Application of the semiconductor-Bloch formalism to topological systems"](https://meetings.aps.org/Meeting/MAR21/Session/C51.11){:target="_blank"}   
 *APS March Meeting 2021*
 
-["Higgs mode locaization at the superfluid-Mott glass quantum phase transition"](https://sites.google.com/view/localisation2020)  
+["Higgs mode locaization at the superfluid-Mott glass quantum phase transition"](https://sites.google.com/view/localisation2020){:target="_blank"}  
 *Localisation 2020*
 
-["Quantum Critical Behavior of the Superfluid-Mott Glass Transition"](https://cse.umn.edu/ftpi/ASCES2019)  
+["Quantum Critical Behavior of the Superfluid-Mott Glass Transition"](https://cse.umn.edu/ftpi/ASCES2019){:target="_blank"}  
 *Advances in Strongly Correlated Electron Systems (2019)*
 
-["Amplitude (Higgs) mode at the superfluid-Mott glass transtion"](https://meetings.aps.org/Meeting/MAR19/Session/S07.11)  
+["Amplitude (Higgs) mode at the superfluid-Mott glass transtion"](https://meetings.aps.org/Meeting/MAR19/Session/S07.11){:target="_blank"}  
 *APS March Meeting 2019*
 
-["Quantum critical behavior of a three-dimensional superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR18/Session/R44.5)  
+["Quantum critical behavior of a three-dimensional superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR18/Session/R44.5){:target="_blank"}  
 *APS March Meeting 2018*
 
-["Quantum critical behavior of the superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR17/Session/A20.9)  
+["Quantum critical behavior of the superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR17/Session/A20.9){:target="_blank"}  
 *APS March Meeting 2017*
 
 # Awards
-- ["Schearer" Prize 2021](https://econnection.mst.edu/2019/01/two-ph-d-students-win-physics-prize/) (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
+- ["Schearer" Prize 2021](https://econnection.mst.edu/2019/01/two-ph-d-students-win-physics-prize/){:target="_blank"} (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
 "Localization of the Higgs mode near the superfluid-Mott glass quantum phase transiton"
 
-- ["Schearer" Prize 2020](https://physics.mst.edu/media/academic/physics/documents/newsletter/MatterNMotion2021.pdf) (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
+- ["Schearer" Prize 2020](https://physics.mst.edu/media/academic/physics/documents/newsletter/MatterNMotion2021.pdf){:target="_blank"} (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
 "High-harmonic generation in Dirac metals: Application of the semiconductor-Bloch formalism to topological systems"  
 
-- ["Schearer" Prize 2018](https://physics.mst.edu/media/academic/physics/documents/newsletter/Matter_n_Motion2019_final.pdf) (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
+- ["Schearer" Prize 2018](https://physics.mst.edu/media/academic/physics/documents/newsletter/Matter_n_Motion2019_final.pdf{:target="_blank"} (1st Place) - *Laird D. Schearer Competition for Graduate Research*   
 "Quantum Critical Behavior of a Three-Dimensional Superfluid-Mott Glass Transition"  
 
-- [Fuller Prize 2014](https://physics.mst.edu/media/academic/physics/documents/newsletter/Matter_n_Motion2015_final.pdf#180129090153) (2nd Place) - *Harold Q. Fuller Undergraduate Research Competition*  
+- [Fuller Prize 2014](https://physics.mst.edu/media/academic/physics/documents/newsletter/Matter_n_Motion2015_final.pdf#180129090153){:target="_blank"} (2nd Place) - *Harold Q. Fuller Undergraduate Research Competition*  
 "Magnetization of transition metal-doped topological insulators"  
 
 - Eagle Scout (2005)
