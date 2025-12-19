@@ -63,9 +63,9 @@ jobs:
         env:
           PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
         run: |
-          npx --yes staticrypt "_site/curriculum-vitae/index.html" \
+          npx --yes staticrypt "_site/secret/index.html" \
             -p "$PAGE_PASSWORD" \
-            -o "_site/curriculum-vitae/index.html"
+            -o "_site/secret/index.html"
 
       - name: Upload site artifact
         # uploads ./_site as "github-pages" by default
