@@ -54,6 +54,19 @@ jobs:
         run: |
           bundle exec htmlproofer _site --disable-external --check-html --allow_hash_href
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Encrypt protected tab (client-side)
+        env:
+          PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
+        run: |
+          npx --yes staticrypt "_site/curriculum-vitae/index.html" \
+            -p "$PAGE_PASSWORD" \
+            -o "_site/curriculum-vitae/index.html"
+
       - name: Upload site artifact
         # uploads ./_site as "github-pages" by default
         uses: actions/upload-pages-artifact@v3
