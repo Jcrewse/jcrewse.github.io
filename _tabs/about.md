@@ -4,7 +4,7 @@ icon: fas fa-id-card
 order: 1
 ---
 
-![Desktop View](../assets/img/polsky-headshot-close.jpg){: .width="25%" .right}
+![Desktop View](../assets/img/polsky-headshot-close.jpg){: .width="500" .right}
 ## Jack R. Crewse III, Ph.D. 
 
 Associate Manager, Intellectual Property  
