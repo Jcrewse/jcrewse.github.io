@@ -50,29 +50,13 @@ jobs:
 
       # Runs before the upload so a broken link blocks the deploy rather than
       # shipping it.
+      # Runs before the upload so a broken link blocks the deploy rather than
+      # shipping it. The self-test runs first: it proves the checker still
+      # detects a known-broken link, so the real run cannot pass vacuously.
       - name: Check links
         run: |
-          mkdir -p /tmp/ctl
-          printf '<!doctype html><html><head><title>t</title></head><body><a href="/missing-abc.html">x</a></body></html>' > /tmp/ctl/index.html
-          echo "control: one <a href> to a file that does not exist -- a working"
-          echo "checker MUST report a failure here."
-
-          for v in 5.2.2 5.1.1 5.0.10 5.0.5; do
-            echo; echo "=================== html-proofer $v ==================="
-            gem install html-proofer -v "$v" --no-document >/dev/null 2>&1 || { echo "  install failed"; continue; }
-            env -u RUBYOPT -u BUNDLE_GEMFILE -u BUNDLE_PATH -u BUNDLE_APP_CONFIG \
-              ruby -e '
-                gem "html-proofer", ARGV[0]
-                require "html_proofer"
-                begin
-                  HTMLProofer.check_directory("/tmp/ctl", disable_external: true).run
-                  puts "  RESULT: passed (BAD -- broken link went undetected)"
-                rescue StandardError => e
-                  puts "  RESULT: #{e.class} (GOOD -- it caught the broken link)"
-                end
-              ' "$v" 2>&1 | sed 's/^/  /'
-          done
-          echo; echo "(diagnostic run -- not gating the deploy)"
+          bundle exec ruby .github/scripts/check-links.rb --self-test
+          bundle exec ruby .github/scripts/check-links.rb
 
       - name: Upload site artifact
         # uploads ./_site as "github-pages" by default

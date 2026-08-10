@@ -13,9 +13,9 @@ gem 'github-pages'
 gem 'connection_pool', '2.5.0'
 
 group :test do
-  gem 'html-proofer', '~> 5.0'
-  # html-proofer 5.2.2 extracts zero links under nokogiri 1.18.x -- proven with
-  # a hand-written control file, both inside and outside the bundle. Pin to the
-  # 1.16 series, which github-pages also accepts (it wants >= 1.13.6, < 2.0).
-  gem 'nokogiri', '~> 1.16.0'
+  # No html-proofer: every 5.x release reports "Checking 0 internal links" and
+  # passes a control document with a deliberately broken link. See
+  # .github/scripts/check-links.rb, which uses nokogiri (already present via
+  # jekyll) to do the internal link checking directly.
+  gem 'nokogiri'
 end
