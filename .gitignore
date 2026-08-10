@@ -2,15 +2,16 @@
 .*
 !.git*
 !.editorconfig
-!.nojekyll
-!.husky
-!.commitlintrc.json
-!.versionrc.json
-!.stylelintrc.json
 
-# bundler cache
+# build output
 _site
-vendor
+.jekyll-cache
+.jekyll-metadata
+
+# bundler install path -- anchored to the repo root on purpose.
+# A bare `vendor` also matches _sass/vendor/, which is theme source
+# (font-awesome, susy, breakpoint) and must stay tracked.
+/vendor
 
 # rubygem
 *.gem
