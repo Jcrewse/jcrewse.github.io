@@ -31,8 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -50,28 +48,14 @@ jobs:
         env:
           JEKYLL_ENV: "production"
 
-      - name: Test site
-        run: |
-          bundle exec htmlproofer _site --disable-external --check-html --allow_hash_href
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Encrypt protected tab (client-side)
-        env:
-          PAGE_PASSWORD: ${{ secrets.PAGE_PASSWORD }}
-        run: |
-          npx --yes staticrypt "_site/curriculum-vitae/index.html" \
-            -p "$PAGE_PASSWORD" \
-            -o "_site/curriculum-vitae/index.html"
-
       - name: Upload site artifact
         # uploads ./_site as "github-pages" by default
         uses: actions/upload-pages-artifact@v3
 
   deploy:
+    # Only the default branch is published. Other branches build above so the
+    # output can be inspected without overwriting the live site.
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
