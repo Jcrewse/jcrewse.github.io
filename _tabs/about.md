@@ -2,6 +2,7 @@
 # the default layout is 'page'
 icon: fas fa-id-card
 order: 1
+permalink: /
 ---
 
 ![Desktop View](../assets/img/polsky-headshot-close.jpg){: .right width="300" height="300"}
