@@ -7,8 +7,8 @@ redirect_from:
   - /about.html
 ---
 
-Associate Manager, Intellectual Property
-[Polsky Center for Entrepreneurship and Innovation](https://polsky.uchicago.edu)
+Associate Manager, Intellectual Property<br>
+[Polsky Center for Entrepreneurship and Innovation](https://polsky.uchicago.edu)<br>
 <span style="color:#800000">University of Chicago</span>
 
 ## Professional Interests
