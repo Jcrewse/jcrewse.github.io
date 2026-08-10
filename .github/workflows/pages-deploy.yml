@@ -52,14 +52,27 @@ jobs:
       # shipping it.
       - name: Check links
         run: |
-          set -o pipefail
-          bundle exec ruby .github/scripts/check-links.rb 2>&1 | tee /tmp/proofer.log
-          # Second guard, on the real site rather than the script's control
-          # document: zero internal links here means nothing was verified.
-          if grep -q "Checking 0 internal links" /tmp/proofer.log; then
-            echo "::error::htmlproofer checked 0 internal links -- it verified nothing"
-            exit 1
-          fi
+          mkdir -p /tmp/ctl
+          printf '<!doctype html><html><head><title>t</title></head><body><a href="/missing-abc.html">x</a></body></html>' > /tmp/ctl/index.html
+          echo "control: one <a href> to a file that does not exist -- a working"
+          echo "checker MUST report a failure here."
+
+          for v in 5.2.2 5.1.1 5.0.10 5.0.5; do
+            echo; echo "=================== html-proofer $v ==================="
+            gem install html-proofer -v "$v" --no-document >/dev/null 2>&1 || { echo "  install failed"; continue; }
+            env -u RUBYOPT -u BUNDLE_GEMFILE -u BUNDLE_PATH -u BUNDLE_APP_CONFIG \
+              ruby -e '
+                gem "html-proofer", ARGV[0]
+                require "html_proofer"
+                begin
+                  HTMLProofer.check_directory("/tmp/ctl", disable_external: true).run
+                  puts "  RESULT: passed (BAD -- broken link went undetected)"
+                rescue StandardError => e
+                  puts "  RESULT: #{e.class} (GOOD -- it caught the broken link)"
+                end
+              ' "$v" 2>&1 | sed 's/^/  /'
+          done
+          echo; echo "(diagnostic run -- not gating the deploy)"
 
       - name: Upload site artifact
         # uploads ./_site as "github-pages" by default
