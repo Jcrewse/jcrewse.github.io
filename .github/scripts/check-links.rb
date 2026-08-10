@@ -1,40 +1,54 @@
 # frozen_string_literal: true
 
-# TEMPORARY DIAGNOSTIC BUILD -- parser comparison.
-# html-proofer 5 parses with Nokogiri's HTML5 parser; the previous diagnostic
-# used the HTML4 parser and found 408 links where htmlproofer found 0.
+# TEMPORARY DIAGNOSTIC BUILD -- control experiment.
+# Parsing is fine (HTML4 and HTML5 both find 20 links) and there is no <base>
+# tag, yet htmlproofer reports 0 internal links. Test a hand-written file with
+# a known-good relative link to isolate htmlproofer from our HTML.
 
 require "html_proofer"
-require "nokogiri"
+require "fileutils"
 
-f = "./_site/index.html"
-content = File.read(f)
-puts "file: #{f} (#{content.bytesize} bytes)"
+FileUtils.mkdir_p("/tmp/ctl")
+File.write("/tmp/ctl/index.html", <<~HTML)
+  <!doctype html>
+  <html lang="en"><head><meta charset="utf-8"><title>t</title></head>
+  <body>
+    <a href="/other.html">root relative</a>
+    <a href="other.html">doc relative</a>
+    <a href="/definitely-missing-abc.html">missing</a>
+  </body></html>
+HTML
+File.write("/tmp/ctl/other.html", "<!doctype html><html><head><title>o</title></head><body>o</body></html>")
 
-h4 = Nokogiri::HTML(content).css("a[href]").length
-puts "HTML4 parser <a href>: #{h4}"
-
-begin
-  doc5 = Nokogiri::HTML5(content)
-  puts "HTML5 parser <a href>: #{doc5.css("a[href]").length}"
-  puts "HTML5 body children:   #{doc5.css("body > *").map(&:name).first(12).inspect}"
-  puts "HTML5 doc length:      #{doc5.to_html.length}"
+def attempt(label)
+  puts "\n--- #{label} ---"
+  yield
+  puts "    => passed"
 rescue StandardError => e
-  puts "HTML5 parser RAISED: #{e.class}: #{e.message[0, 500]}"
+  puts "    => #{e.class}: #{e.message.to_s[0, 600]}"
 end
 
-# What does html-proofer itself build for this one file?
-begin
-  runner = HTMLProofer.check_file(f, disable_external: true, allow_hash_href: true)
+attempt("CONTROL: /tmp/ctl (expect a failure for definitely-missing-abc)") do
+  HTMLProofer.check_directory("/tmp/ctl", disable_external: true).run
+end
+
+attempt("OURS: ./_site/index.html, no options at all") do
+  runner = HTMLProofer.check_file("./_site/index.html")
   runner.run
-  puts "check_file => passed"
-rescue StandardError => e
-  puts "check_file => #{e.class}: #{e.message.to_s[0, 800]}"
 end
 
-# Does the <head> contain anything that could swallow the document?
-head = content[/<head.*?<\/head>/m].to_s
-puts "\nhead bytes: #{head.bytesize}"
-puts "script opens in head: #{head.scan(/<script/).length}, closes: #{head.scan(%r{</script>}).length}"
-puts "style opens in head:  #{head.scan(/<style/).length}, closes: #{head.scan(%r{</style>}).length}"
-puts "whole doc script opens: #{content.scan(/<script/).length}, closes: #{content.scan(%r{</script>}).length}"
+# Introspect what the runner actually collected.
+runner = HTMLProofer.check_directory("./_site", disable_external: true)
+begin
+  runner.run
+rescue StandardError
+  nil
+end
+%i[external_urls internal_urls checked_paths].each do |m|
+  puts "runner.#{m}: #{runner.respond_to?(m) ? runner.public_send(m).length : "(no such method)"}"
+rescue StandardError => e
+  puts "runner.#{m}: error #{e.class}"
+end
+puts "runner options[:disable_external]=#{runner.options[:disable_external].inspect}" if runner.respond_to?(:options)
+puts "runner type=#{runner.instance_variable_get(:@type).inspect}"
+puts "runner source=#{runner.instance_variable_get(:@source).inspect}"
