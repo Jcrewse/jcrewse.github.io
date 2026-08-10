@@ -9,7 +9,7 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "default" # The available themes options are "default", "air", "sunrise", "mint", "dirt" and "contrast"
-title                    : "Jack Crewse, PhD"
+title                    : "Jack Crewse"
 title_separator          : "-"
 name                     : &name "Jack R. Crewse III"
 description              : &description "The personal web page of Jack Crewse."
@@ -25,7 +25,7 @@ author:
   avatar           : "eiffel-headshot.jpg"
   name             : "Jack R. Crewse III, PhD"
   pronouns         : # example: "she/her"
-  bio              : "Associate Manager, Intellectual Property at the Polsky Center for Entrepreneurship and Innovation. Former condensed matter physicist."
+  bio              : "Physicist, Musician, Artist"
   location         : "Oak Park, IL"
   employer         : "University of Chicago"
   uri              : # URL
