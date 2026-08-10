@@ -1,44 +1,40 @@
 # frozen_string_literal: true
 
-# TEMPORARY DIAGNOSTIC BUILD -- see commit message. Reverts to the plain check
-# once we know why htmlproofer reports zero internal links on a site that
-# demonstrably contains them.
+# TEMPORARY DIAGNOSTIC BUILD -- parser comparison.
+# html-proofer 5 parses with Nokogiri's HTML5 parser; the previous diagnostic
+# used the HTML4 parser and found 408 links where htmlproofer found 0.
 
 require "html_proofer"
 require "nokogiri"
 
-puts "html-proofer version: #{Gem.loaded_specs["html-proofer"]&.version}"
-puts "nokogiri version:     #{Gem.loaded_specs["nokogiri"]&.version}"
+f = "./_site/index.html"
+content = File.read(f)
+puts "file: #{f} (#{content.bytesize} bytes)"
 
-files = Dir.glob("./_site/**/*.html")
-puts "html files on disk:   #{files.length}"
+h4 = Nokogiri::HTML(content).css("a[href]").length
+puts "HTML4 parser <a href>: #{h4}"
 
-hrefs = files.flat_map do |f|
-  Nokogiri::HTML(File.read(f)).css("a[href]").map { |a| a["href"] }
-end
-puts "<a href> found:       #{hrefs.length}"
-puts "  sample: #{hrefs.uniq.first(6).inspect}"
-
-root_relative = hrefs.select { |h| h.start_with?("/") }
-puts "root-relative hrefs:  #{root_relative.length}"
-puts "  sample: #{root_relative.uniq.first(5).inspect}"
-
-def attempt(label, dir, opts)
-  puts "\n--- #{label} ---"
-  puts "    opts: #{opts.inspect}"
-  HTMLProofer.check_directory(dir, opts).run
-  puts "    => passed"
+begin
+  doc5 = Nokogiri::HTML5(content)
+  puts "HTML5 parser <a href>: #{doc5.css("a[href]").length}"
+  puts "HTML5 body children:   #{doc5.css("body > *").map(&:name).first(12).inspect}"
+  puts "HTML5 doc length:      #{doc5.to_html.length}"
 rescue StandardError => e
-  puts "    => #{e.class}: #{e.message.to_s[0, 1500]}"
+  puts "HTML5 parser RAISED: #{e.class}: #{e.message[0, 500]}"
 end
 
-SITE = %r{^https://jcrewse\.github\.io}
+# What does html-proofer itself build for this one file?
+begin
+  runner = HTMLProofer.check_file(f, disable_external: true, allow_hash_href: true)
+  runner.run
+  puts "check_file => passed"
+rescue StandardError => e
+  puts "check_file => #{e.class}: #{e.message.to_s[0, 800]}"
+end
 
-attempt("A: disable_external only", "./_site",
-  { disable_external: true, allow_hash_href: true })
-
-attempt("B: disable_external + swap_urls", "./_site",
-  { disable_external: true, allow_hash_href: true, swap_urls: { SITE => "" } })
-
-attempt("C: ignore_urls for offsite, swap on", "./_site",
-  { allow_hash_href: true, swap_urls: { SITE => "" }, ignore_urls: [%r{^https?://(?!jcrewse\.github\.io)}] })
+# Does the <head> contain anything that could swallow the document?
+head = content[/<head.*?<\/head>/m].to_s
+puts "\nhead bytes: #{head.bytesize}"
+puts "script opens in head: #{head.scan(/<script/).length}, closes: #{head.scan(%r{</script>}).length}"
+puts "style opens in head:  #{head.scan(/<style/).length}, closes: #{head.scan(%r{</style>}).length}"
+puts "whole doc script opens: #{content.scan(/<script/).length}, closes: #{content.scan(%r{</script>}).length}"
