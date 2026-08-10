@@ -12,8 +12,6 @@ redirect_from:
 
 [PDF version (updated Oct. '22)]({{ '/files/JackCrewseCV.pdf' | relative_url }}){: .btn .btn--primary target="_blank" rel="noopener"}
 
-A full list of [publications]({{ '/publications/' | relative_url }}) is maintained separately.
-
 Experience
 ======
 **Associate Manager, Intellectual Property and Technology Development** (Oct. 2023 - present)
@@ -79,24 +77,57 @@ Skills
 * **Methods:** quantum Monte Carlo, density functional theory (GPAW, ASE), tight-binding methods, solid-state optics (high-harmonic generation, light-matter interactions in topological materials)
 * **Other:** $\LaTeX$
 
-Conference Presentations
+Publications
 ======
-* ["Quantum Critical Behavior and Collective Modes Near The Superfluid-Mott Glass Transition"](https://www.anl.gov/postdoctoral-research-and-career-symposium){:target="_blank"}<br>
-  *Argonne Postdoctoral Research and Career Symposium 2022*
-* ["Localization of the Higgs mode at the superfluid-Mott glass quantum phase transition"](https://meetings.aps.org/Meeting/MAR22/Session/Y64.4){:target="_blank"}<br>
-  *APS March Meeting 2022*
-* ["High-harmonic generation in Dirac metals: Application of the semiconductor-Bloch formalism to topological systems"](https://meetings.aps.org/Meeting/MAR21/Session/C51.11){:target="_blank"}<br>
-  *APS March Meeting 2021*
-* ["Higgs mode localization at the superfluid-Mott glass quantum phase transition"](https://sites.google.com/view/localisation2020){:target="_blank"}<br>
-  *Localisation 2020*
-* ["Quantum Critical Behavior of the Superfluid-Mott Glass Transition"](https://cse.umn.edu/ftpi/ASCES2019){:target="_blank"}<br>
-  *Advances in Strongly Correlated Electron Systems 2019*
-* ["Amplitude (Higgs) mode at the superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR19/Session/S07.11){:target="_blank"}<br>
-  *APS March Meeting 2019*
-* ["Quantum critical behavior of a three-dimensional superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR18/Session/R44.5){:target="_blank"}<br>
-  *APS March Meeting 2018*
-* ["Quantum critical behavior of the superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR17/Session/A20.9){:target="_blank"}<br>
-  *APS March Meeting 2017*
+**"Localization of the Higgs mode at the superfluid-Mott glass transition"**<br>
+***J. Crewse**, T. Vojta* (2021)<br>
+[Physical Review B **104** (1), 014511](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.104.014511){:target="_blank"}
+
+**"Tunable non-integer high-harmonic generation in a topological insulator"**<br>
+*C.P. Schmid, L. Weigl, P. Grossing, V. Junk, C. Gorini, S. Schlauderer, S. Ito, M. Meierhofer, N. Hofmann, D. Afanasiev, **J. Crewse**, K. Koch, O.E. Tereshchenko, J. Gudde, F. Evers, J. Wilhelm, K. Richter, U. Hofer, R. Huber* (2021)<br>
+[Nature **593**, 385-390](https://www.nature.com/articles/s41586-021-03466-7){:target="_blank"}
+
+**"Semiconductor Bloch-equations formalism: Derivation and application to high-harmonic generation from Dirac fermions"**<br>
+*J. Wilhelm, P. Grossing, A. Seith, **J. Crewse**, M. Nitsch, C. Schmid, F. Evers* (2021)<br>
+[Physical Review B **103**, 125419](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.125419){:target="_blank"}
+
+**"Collective modes at a disordered quantum phase transition"**<br>
+*M. Puschmann, **J. Crewse**, J.A. Hoyos, T. Vojta* (2020)<br>
+[Physical Review Letters **125**, 127002](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.027002){:target="_blank"}
+
+**"Quantum critical behavior of a three-dimensional superfluid-Mott glass transition"**<br>
+***J. Crewse**, C. Lerch, T. Vojta* (2018)<br>
+[Physical Review B **98**, 054514](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.054514){:target="_blank"}
+
+**"Quantum critical behavior of the superfluid-Mott glass transition"**<br>
+*T. Vojta, **J. Crewse**, M. Puschmann, D. Arovas, Y. Kiselev* (2016)<br>
+[Physical Review B **94**, 134501](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.134501){:target="_blank"}
+
+Conferences
+======
+["Quantum Critical Behavior and Collective Modes Near The Superfluid-Mott Glass Transition"](https://www.anl.gov/postdoctoral-research-and-career-symposium){:target="_blank"}<br>
+*Argonne Postdoc Research and Career Symposium 2022*
+
+["Localization of the Higgs mode at the superfluid-Mott glass quantum phase transition"](https://meetings.aps.org/Meeting/MAR22/Session/Y64.4){:target="_blank"}<br>
+*APS March Meeting 2022*
+
+["High-harmonic generation in Dirac metals: Application of the semiconductor-Bloch formalism to topological systems"](https://meetings.aps.org/Meeting/MAR21/Session/C51.11){:target="_blank"}<br>
+*APS March Meeting 2021*
+
+["Higgs mode localization at the superfluid-Mott glass quantum phase transition"](https://sites.google.com/view/localisation2020){:target="_blank"}<br>
+*Localisation 2020*
+
+["Quantum Critical Behavior of the Superfluid-Mott Glass Transition"](https://cse.umn.edu/ftpi/ASCES2019){:target="_blank"}<br>
+*Advances in Strongly Correlated Electron Systems (2019)*
+
+["Amplitude (Higgs) mode at the superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR19/Session/S07.11){:target="_blank"}<br>
+*APS March Meeting 2019*
+
+["Quantum critical behavior of a three-dimensional superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR18/Session/R44.5){:target="_blank"}<br>
+*APS March Meeting 2018*
+
+["Quantum critical behavior of the superfluid-Mott glass transition"](https://meetings.aps.org/Meeting/MAR17/Session/A20.9){:target="_blank"}<br>
+*APS March Meeting 2017*
 
 Awards
 ======

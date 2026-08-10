@@ -81,15 +81,6 @@ author:
   youtube          : # Username
   zhihu            : # Username
 
-# Publication Category - The following the list of publication categories and their headings
-publication_category:
-  books:
-    title: 'Books'
-  manuscripts:
-    title: 'Journal Articles'    
-  conferences:
-    title: 'Conference Papers'
-
 # Site Settings
 teaser                   :  # filename of teaser fallback teaser image placed in /images/ for social media previews
 breadcrumbs              : false # true, false (default)
@@ -218,11 +209,8 @@ kramdown:
   enable_coderay: false
 
 
-# These settings control the types of collections used by the template
-collections:
-  publications:
-    output: true
-    permalink: /:collection/:path/
+# No collections are in use. Publications, conferences and teaching all live
+# directly in _pages/cv.md; posts use the built-in _posts collection.
 
 
 # These settings control how pages and collections are included in the site
@@ -245,15 +233,6 @@ defaults:
     values:
       layout: single
       author_profile: true
-  # _publications
-  - scope:
-      path: ""
-      type: publications
-    values:
-      layout: single
-      author_profile: true
-      share: true
-      comments: true
 
 
 # Sass/SCSS

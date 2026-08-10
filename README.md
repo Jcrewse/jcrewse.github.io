@@ -20,7 +20,7 @@ Three kinds of thing live in this repo:
 
 | | What | Touch it? |
 |---|---|---|
-| **Content** | `_pages/`, `_posts/`, `_publications/`, `_drafts/`, `files/`, `images/` | Yes, constantly |
+| **Content** | `_pages/`, `_posts/`, `_drafts/`, `files/`, `images/` | Yes, constantly |
 | **Settings** | `_config.yml`, `_data/navigation.yml` | Occasionally |
 | **Theme machinery** | `_layouts/`, `_includes/`, `_sass/`, `assets/` | Rarely — see [Theme is vendored](#the-theme-is-vendored) |
 
@@ -37,12 +37,10 @@ filename or folder. That means you can move files around freely.
 | URL | Source file | Layout |
 |---|---|---|
 | `/` | `_pages/about.md` | single |
-| `/publications/` | `_pages/publications.html` | archive |
 | `/blog/` | `_pages/year-archive.html` | archive |
 | `/cv/` | `_pages/cv.md` | archive |
 | `/pendulum/` | `_pages/pendulum.html` | single |
 | `/posts/<title>/` | `_posts/YYYY-MM-DD-title.md` | single |
-| `/publications/<name>/` | `_publications/*.md` | single |
 | `/404.html` | `_pages/404.md` | single |
 
 `_pages/` also contains `category-archive.html`, `tag-archive.html`,
@@ -76,30 +74,32 @@ post dated in the future still appears, because `future: true` is set.
 To work on something without publishing it, put it in `_drafts/` and leave the
 date off the filename. Drafts are never built. (There are four in there now.)
 
-### Add a publication
+### Add a publication or conference talk
 
-Create `_publications/YYYY-MM-DD-short-name.md`. Front matter only — no body
-needed:
+Both are plain Markdown in `_pages/cv.md` — there is no separate collection or
+listing page. Add an entry to the relevant section, newest first.
+
+A publication is three lines: bold title, italic authors, linked journal
+reference.
 
 ```markdown
----
-title: "Paper Title"
-collection: publications
-category: manuscripts
-permalink: /publication/2026-short-name
-excerpt: 'One-line summary shown on the listing page.'
-date: 2026-01-15
-venue: 'Physical Review B'
-paperurl: 'https://doi.org/...'
-citation: 'A. Author, <b>J. Crewse</b>. "Paper Title." <i>Physical Review B</i> <b>1</b>, 012345.'
----
+**"Paper Title"**<br>
+***J. Crewse**, A. Coauthor* (2026)<br>
+[Physical Review B **104** (1), 014511](https://doi.org/...){:target="_blank"}
 ```
 
-**`category:` is required.** The listing page groups by it and *silently skips*
-anything whose category isn't one of `manuscripts`, `books`, or `conferences`
-(defined under `publication_category` in `_config.yml`). A paper with no
-category just won't appear, with no error. Use `manuscripts` for journal
-articles.
+A conference talk is two: linked title, italic venue.
+
+```markdown
+["Talk Title"](https://example.org/session){:target="_blank"}<br>
+*APS March Meeting 2026*
+```
+
+Note the `<br>` at the end of each line but the last, and the blank line
+between entries. Markdown's usual two-trailing-spaces line break would work
+too, but `.editorconfig` sets `trim_trailing_whitespace`, so any editor
+honouring it will silently eat them and collapse the entry onto one line. Use
+`<br>`.
 
 ### Add a new page
 
@@ -140,10 +140,10 @@ The photo is `author.avatar`, resolved relative to `images/`. Currently
 
 ### Edit the CV
 
-`_pages/cv.md`, plain Markdown. Sections use `Heading\n======` style.
-Conference presentations and teaching live here directly (teaching is under
-Experience as the Graduate Teaching Assistant entry). Publications do **not** —
-they come from `_publications/`.
+`_pages/cv.md`, plain Markdown, and it is now the single source for everything
+academic — experience, education, certificates, skills, publications,
+conferences, awards. Teaching sits under Experience as the Graduate Teaching
+Assistant entry. Sections use `Heading` followed by a line of `======`.
 
 The downloadable PDF is `files/JackCrewseCV.pdf`. Replacing that file is all
 that's needed; the link points at a fixed path.
@@ -279,10 +279,9 @@ inbound links.
 ```
 _config.yml              Site settings, author sidebar, collections
 _data/navigation.yml     Top nav menu
-_pages/                  Standalone pages (about, cv, publications, blog, pendulum)
+_pages/                  Standalone pages (about, cv, blog, pendulum)
 _posts/                  Published blog posts
 _drafts/                 Unpublished drafts, never built
-_publications/           One file per paper
 files/                   PDFs (CV, thesis)
 images/                  Photos and favicons
 sw.js                    Service-worker tombstone (see above)

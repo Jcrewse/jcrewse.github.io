@@ -19,6 +19,5 @@ Today I manage a portfolio of more than 250 patents covering quantum computing, 
 
 ## Around this site
 
-- [Publications]({{ '/publications/' | relative_url }}) — peer-reviewed work in *Physical Review B*, *Physical Review Letters*, and *Nature*
-- [CV]({{ '/cv/' | relative_url }}) — full curriculum vitae, including conference presentations and teaching
+- [CV]({{ '/cv/' | relative_url }}) — full curriculum vitae, including publications in *Physical Review B*, *Physical Review Letters*, and *Nature*
 - [Pendulum]({{ '/pendulum/' | relative_url }}) — an interactive double pendulum simulation
