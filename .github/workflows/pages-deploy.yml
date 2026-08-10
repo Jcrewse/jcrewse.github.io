@@ -49,16 +49,18 @@ jobs:
           JEKYLL_ENV: "production"
 
       # Runs before the upload so a broken link blocks the deploy rather than
-      # shipping it. --swap-urls rewrites our own absolute URLs back to site
-      # paths; without it every internal link counts as external and gets
-      # skipped by --disable-external, so the check would pass while testing
-      # nothing.
+      # shipping it.
       - name: Check links
         run: |
-          bundle exec htmlproofer ./_site \
-            --disable-external \
-            --allow-hash-href \
-            --swap-urls "^https\://jcrewse\.github\.io:"
+          set -o pipefail
+          bundle exec ruby .github/scripts/check-links.rb 2>&1 | tee /tmp/proofer.log
+          # Guard against a vacuous pass. If URL swapping stops matching, every
+          # internal link is reclassified as external, skipped, and the check
+          # reports success having verified nothing.
+          if grep -q "Checking 0 internal links" /tmp/proofer.log; then
+            echo "::error::htmlproofer checked 0 internal links -- swap_urls is no longer matching"
+            exit 1
+          fi
 
       - name: Upload site artifact
         # uploads ./_site as "github-pages" by default
