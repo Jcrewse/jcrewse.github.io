@@ -17,6 +17,12 @@ My career has been characterized by a synergy between my fascination with the la
 
 After my academic career I joined the Polsky Center for Entrepreneurship and Innovation where I support commercialization efforts for cutting edge technologies developed at the University of Chicago. In this role, I manage a portfolio of intellectual property, support licensing efforts, and fascilitate start up support for computer science and quantum technologies.
 
+## Personal Interests
+
+My personal life has been heavily influenced by music. Some of my earliest memories include falling asleep to my father's band practicing in the basement, and my earliest academic pursuits were as a music major at University of Central Missouri. I have played drums for nearly 20 years in various capacities: from my first death metal band in high school, a two piece bedroom punk project, industrial goth rock, and chaotic noise rock. I have written and composed some electronic music, and a couple of simple film soundtracks. Additionally, I have played guitar, piano, saxophone and any other instrument I can get my hands on to various capaticies as well. 
+
+I have dabbled in the visual arts. I occasionally work with acrylic paints and enjoy photography. 
+
 ## Around this site
 
 - [CV]({{ '/cv/' | relative_url }}) — full curriculum vitae, including publications in *Physical Review B*, *Physical Review Letters*, and *Nature*
