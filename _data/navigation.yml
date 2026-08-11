@@ -8,11 +8,12 @@ main:
   - title: "About"
     url: /
 
+  - title: "CV"
+    url: /cv/
+
   - title: "Blog"
     url: /blog/
 
   - title: "Pendulum"
     url: /pendulum/
 
-  - title: "CV"
-    url: /cv/
