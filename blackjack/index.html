@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blackjack</title>
+  <meta name="description" content="A browser blackjack game with splitting, doubling, insurance and surrender.">
+  <style>
+    :root {
+      --felt: #0b6e3a;
+      --felt-dark: #054223;
+      --gold: #f2c94c;
+      --lose: #ff8a80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #fff;
+      background: radial-gradient(ellipse at center, var(--felt) 0%, var(--felt-dark) 100%) fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+    }
+    h1 { margin: 0; font-size: 1.6rem; letter-spacing: 3px; }
+    .bank { font-size: 1.1rem; }
+    .bank strong { color: var(--gold); }
+
+    main {
+      width: 100%;
+      max-width: 960px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 0 16px 24px;
+    }
+    .area { width: 100%; text-align: center; }
+    .label {
+      font-size: .85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: .85;
+      margin-bottom: 10px;
+    }
+    .score {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, .35);
+      letter-spacing: 0;
+    }
+    .label .score { margin-left: 6px; }
+    .score:empty { display: none; }
+
+    .hands {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px 24px;
+      min-height: 170px;
+    }
+    .hand-wrap {
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      transition: border-color .2s, background .2s;
+    }
+    .hand-wrap.active { border-color: var(--gold); background: rgba(255, 255, 255, .07); }
+    .hand-info {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      min-height: 1.6em;
+      font-size: .9rem;
+    }
+    .hand-bet { color: var(--gold); font-weight: 600; }
+    .hand-bet:empty, .badge:empty { display: none; }
+    .badge {
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: #cfd8dc;
+      color: #222;
+    }
+    .badge.win { background: var(--gold); color: #3a2a00; }
+    .badge.lose { background: #c62828; color: #fff; }
+
+    .hand { display: flex; justify-content: center; min-height: 126px; perspective: 600px; }
+    .card {
+      width: 86px;
+      height: 122px;
+      flex: none;
+      border-radius: 8px;
+      background: #fff;
+      color: #111;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, .4);
+      position: relative;
+      margin-left: -28px;
+      font-weight: 700;
+      animation: deal .3s ease-out;
+    }
+    .card:first-child { margin-left: 0; }
+    .card.red { color: #c62828; }
+    .card.flip { animation: flip .4s ease-out; }
+    .card .corner { position: absolute; line-height: 1.05; font-size: 1.05rem; text-align: center; }
+    .card .tl { top: 6px; left: 7px; }
+    .card .br { bottom: 6px; right: 7px; transform: rotate(180deg); }
+    .card .pip {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.6rem;
+    }
+    .card.back {
+      background: repeating-linear-gradient(45deg, #b71c1c 0 6px, #8e0000 6px 12px);
+      border: 4px solid #fff;
+    }
+    @keyframes deal {
+      from { transform: translateY(-40px) scale(.9); opacity: 0; }
+      to { transform: none; opacity: 1; }
+    }
+    @keyframes flip {
+      from { transform: rotateY(90deg); }
+      to { transform: none; }
+    }
+
+    .message {
+      min-height: 1.6em;
+      font-size: 1.35rem;
+      font-weight: 700;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+    }
+    .message.win { color: var(--gold); }
+    .message.lose { color: var(--lose); }
+
+    .bet { font-size: 1.1rem; }
+    .bet strong { color: var(--gold); }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+
+    button {
+      font: inherit;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #fff;
+      color: var(--felt-dark);
+      box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
+      transition: transform .05s, filter .15s;
+    }
+    button:hover:not(:disabled) { filter: brightness(.9); }
+    button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, .3); }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+    button.primary { background: var(--gold); color: #3a2a00; }
+
+    .play-controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .main-actions button { min-width: 120px; padding: 12px 24px; font-size: 1.1rem; }
+    .side-actions { gap: 8px; }
+    .side-actions button {
+      padding: 7px 14px;
+      font-size: .9rem;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .45);
+      box-shadow: none;
+    }
+    .side-actions button:hover:not(:disabled) { filter: none; background: rgba(255, 255, 255, .28); }
+    .side-actions button:disabled { opacity: .3; }
+
+    .trainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, .25);
+      font-size: .95rem;
+    }
+    .trainer strong { color: var(--gold); }
+    .trainer strong.bump { display: inline-block; animation: bump .35s ease-out; }
+    @keyframes bump { 50% { transform: scale(1.4); } }
+    button.link {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      color: #fff;
+      opacity: .7;
+      font-size: .8rem;
+      font-weight: 400;
+      text-decoration: underline;
+    }
+    .feedback { min-height: 1.4em; max-width: 640px; font-size: .95rem; text-align: center; }
+    .feedback.good { color: #b9f6ca; }
+    .feedback.bad { color: var(--lose); }
+    .feedback.hint { color: var(--gold); }
+    .hint-btn {
+      padding: 6px 14px;
+      font-size: .85rem;
+      background: transparent;
+      color: var(--gold);
+      border: 1px dashed var(--gold);
+      box-shadow: none;
+    }
+    .hint-btn:hover:not(:disabled) { filter: none; background: rgba(242, 201, 76, .12); }
+    button.hinted { outline: 3px solid var(--gold); outline-offset: 3px; animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 50% { outline-color: rgba(242, 201, 76, .3); } }
+
+    .chip {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      padding: 0;
+      color: #fff;
+      border: 4px dashed rgba(255, 255, 255, .85);
+      font-weight: 800;
+    }
+    .chip[data-v="5"] { background: #c62828; }
+    .chip[data-v="25"] { background: #2e7d32; }
+    .chip[data-v="100"] { background: #212121; }
+    .chip[data-v="500"] { background: #6a1b9a; }
+
+    .hidden { display: none !important; }
+
+    footer {
+      padding: 12px 16px 20px;
+      font-size: .8rem;
+      opacity: .8;
+      text-align: center;
+      line-height: 1.6;
+    }
+    footer details { margin-top: 6px; }
+    footer summary { cursor: pointer; font-weight: 600; }
+    footer ul { text-align: left; max-width: 540px; margin: 8px auto 0; padding-left: 20px; }
+    kbd {
+      font-family: inherit;
+      background: rgba(0, 0, 0, .35);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+
+    @media (max-width: 520px) {
+      h1 { font-size: 1.25rem; }
+      .hands { min-height: 135px; gap: 8px 12px; }
+      .hand { min-height: 92px; }
+      .hand-wrap { padding: 6px; }
+      .card { width: 62px; height: 89px; margin-left: -24px; }
+      .card .pip { font-size: 1.8rem; }
+      .card .corner { font-size: .82rem; }
+      .chip { width: 52px; height: 52px; }
+      button { padding: 9px 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>♠ BLACKJACK</h1>
+    <div class="bank">Bank: <strong id="bank">$1,000</strong></div>
+  </header>
+
+  <main>
+    <div class="trainer" aria-live="polite">
+      <span>Score: <strong id="score">0</strong></span>
+      <span>Best: <strong id="best">0</strong></span>
+      <span>Accuracy: <strong id="accuracy">—</strong></span>
+      <button id="reset-stats" class="link">reset stats</button>
+    </div>
+
+    <section class="area">
+      <div class="label">Dealer <span class="score" id="dealer-score"></span></div>
+      <div class="hand" id="dealer-hand"></div>
+    </section>
+
+    <div class="message" id="message" role="status" aria-live="polite">Place your bet</div>
+
+    <section class="area">
+      <div class="label">You</div>
+      <div class="hands" id="player-hands"></div>
+    </section>
+
+    <div class="bet">Bet: <strong id="bet">$0</strong><span id="insurance-info"></span></div>
+
+    <div class="controls" id="bet-controls">
+      <button class="chip" data-v="5">5</button>
+      <button class="chip" data-v="25">25</button>
+      <button class="chip" data-v="100">100</button>
+      <button class="chip" data-v="500">500</button>
+      <button id="clear">Clear</button>
+      <button id="deal" class="primary">Deal</button>
+      <button id="reset" class="primary hidden">Reset bank to $1,000</button>
+    </div>
+
+    <div class="controls hidden" id="insurance-controls">
+      <button id="ins-yes" class="primary">Insurance</button>
+      <button id="ins-no">No thanks</button>
+    </div>
+
+    <div class="play-controls hidden" id="play-controls">
+      <div class="controls main-actions">
+        <button id="hit" class="primary">Hit</button>
+        <button id="stand">Stand</button>
+      </div>
+      <div class="controls side-actions">
+        <button id="double">Double</button>
+        <button id="split">Split</button>
+        <button id="surrender">Surrender</button>
+      </div>
+    </div>
+
+    <button id="hint" class="hint-btn hidden">💡 Show best move (resets score)</button>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+  </main>
+
+  <footer>
+    6 decks · Dealer stands on all 17s · Blackjack pays 3:2 · <span id="shoe"></span><br>
+    Keys: <kbd>H</kbd> hit · <kbd>S</kbd> stand · <kbd>D</kbd> double · <kbd>P</kbd> split ·
+    <kbd>R</kbd> surrender · <kbd>Y</kbd>/<kbd>N</kbd> insurance · <kbd>B</kbd> best move · <kbd>Enter</kbd> deal
+    <details>
+      <summary>How the trainer works</summary>
+      <ul>
+        <li>Every decision is checked against basic strategy for these house rules (6 decks, dealer stands on soft 17, double after split, late surrender).</li>
+        <li>Each optimal decision adds 1 to your score. A mistake resets your score to 0.</li>
+        <li><strong>Show best move</strong> highlights the optimal play but resets your score to 0, and that decision isn't scored.</li>
+        <li>If the best play isn't available (for example, you can't afford to double), the next-best play counts as correct.</li>
+        <li>Basic strategy always declines insurance and even money.</li>
+        <li>Accuracy counts every scored decision. Your best score and accuracy are saved in this browser.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>House rules</summary>
+      <ul>
+        <li>Get closer to 21 than the dealer without going over. Face cards count 10, aces count 1 or 11.</li>
+        <li>A two-card 21 (Blackjack) pays 3:2. Other wins pay 1:1. Ties push and your bet is returned.</li>
+        <li>The dealer draws to 16 and stands on all 17s, including soft 17.</li>
+        <li>If the dealer shows an ace or a ten, they check for Blackjack before you act. If they have it, the hand ends right away.</li>
+        <li><strong>Insurance:</strong> offered when the dealer shows an ace. It costs half your bet and pays 2:1 if the dealer has Blackjack. If you hold Blackjack, it's offered as <em>even money</em>, a guaranteed 1:1 payout.</li>
+        <li><strong>Double:</strong> on any first two cards (including after a split). Your bet doubles and you get exactly one more card.</li>
+        <li><strong>Split:</strong> any two cards of equal value, up to 4 hands. Split aces get one card each and can't be re-split. A 21 after a split pays 1:1, not 3:2.</li>
+        <li><strong>Surrender:</strong> on your first two cards (not after a split), give up the hand and get half your bet back.</li>
+        <li>The shoe is reshuffled once fewer than 25% of the cards remain.</li>
+      </ul>
+    </details>
+  </footer>
+
+  <script>
+  (() => {
+    const SUITS = ['♠', '♥', '♦', '♣'];
+    const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    const NUM_DECKS = 6;
+    const RESHUFFLE_AT = Math.floor(NUM_DECKS * 52 * 0.25);
+    const MAX_HANDS = 4;
+    const START_BANK = 1000;
+    const MIN_BET = 5;
+    const STORAGE_KEY = 'blackjack-bank';
+    const STATS_KEY = 'blackjack-trainer';
+
+    const $ = id => document.getElementById(id);
+    const els = {
+      bank: $('bank'), bet: $('bet'), insuranceInfo: $('insurance-info'),
+      message: $('message'), shoe: $('shoe'),
+      dealerHand: $('dealer-hand'), dealerScore: $('dealer-score'), playerHands: $('player-hands'),
+      betControls: $('bet-controls'), insuranceControls: $('insurance-controls'), playControls: $('play-controls'),
+      deal: $('deal'), clear: $('clear'), reset: $('reset'),
+      insYes: $('ins-yes'), insNo: $('ins-no'),
+      hit: $('hit'), stand: $('stand'), double: $('double'), split: $('split'), surrender: $('surrender'),
+      score: $('score'), best: $('best'), accuracy: $('accuracy'), resetStats: $('reset-stats'),
+      hint: $('hint'), feedback: $('feedback'),
+    };
+
+    let shoe = [];
+    let nextCardId = 0;
+    let dealer = [];
+    // Each hand: { cards, bet, split, splitAces, doubled, surrendered, result }
+    let hands = [];
+    let active = 0;
+    let bank = loadBank();
+    let bet = 0;           // amount staged for the next round
+    let insurance = 0;     // insurance stake this round
+    let insurancePaid = 0; // amount returned from insurance this round
+    let phase = 'betting'; // betting | insurance | player | busy
+    let holeHidden = true;
+    let stats = loadStats(); // { score, best, correct, total }
+    let hintAction = null;   // action highlighted by the hint button
+    let hintUsed = false;    // the current decision was revealed, so it isn't scored
+
+    // ---------- Persistence ----------
+    function loadStats() {
+      const fresh = { score: 0, best: 0, correct: 0, total: 0 };
+      try { return { ...fresh, ...JSON.parse(localStorage.getItem(STATS_KEY)) }; } catch { return fresh; }
+    }
+    function saveStats() {
+      try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch { /* storage unavailable */ }
+    }
+    function loadBank() {
+      try {
+        const v = parseFloat(localStorage.getItem(STORAGE_KEY));
+        return Number.isFinite(v) && v >= 0 ? v : START_BANK;
+      } catch { return START_BANK; }
+    }
+    function saveBank() {
+      try { localStorage.setItem(STORAGE_KEY, String(bank)); } catch { /* storage unavailable */ }
+    }
+
+    // ---------- Cards ----------
+    function buildShoe() {
+      shoe = [];
+      for (let d = 0; d < NUM_DECKS; d++)
+        for (const s of SUITS)
+          for (const r of RANKS) shoe.push({ r, s, id: nextCardId++ });
+      for (let i = shoe.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shoe[i], shoe[j]] = [shoe[j], shoe[i]];
+      }
+    }
+    function draw() {
+      if (!shoe.length) buildShoe();
+      return shoe.pop();
+    }
+    function cardValue(c) {
+      if (c.r === 'A') return 11;
+      if (c.r === 'J' || c.r === 'Q' || c.r === 'K') return 10;
+      return Number(c.r);
+    }
+    function handValue(cards) {
+      let total = 0, aces = 0;
+      for (const c of cards) {
+        total += cardValue(c);
+        if (c.r === 'A') aces++;
+      }
+      while (total > 21 && aces) { total -= 10; aces--; }
+      return { total, soft: aces > 0 };
+    }
+    const isBlackjack = cards => cards.length === 2 && handValue(cards).total === 21;
+    // A two-card 21 on a split hand is just 21, not a Blackjack.
+    const isNatural = h => !h.split && isBlackjack(h.cards);
+    const isBust = h => handValue(h.cards).total > 21;
+
+    // ---------- Rules for available actions ----------
+    const current = () => hands[active];
+    const canAct = () => phase === 'player' && !!current();
+    const canDouble = () => canAct() && current().cards.length === 2 && bank >= current().bet;
+    const canSplit = () => {
+      if (!canAct()) return false;
+      const h = current();
+      return h.cards.length === 2 && cardValue(h.cards[0]) === cardValue(h.cards[1]) &&
+        hands.length < MAX_HANDS && bank >= h.bet;
+    };
+    const canSurrender = () => canAct() && hands.length === 1 && current().cards.length === 2;
+
+    // ---------- Basic strategy (6 decks, S17, DAS, late surrender) ----------
+    const LABELS = {
+      hit: 'Hit', stand: 'Stand', double: 'Double', split: 'Split', surrender: 'Surrender',
+      insurance: 'Take insurance', decline: 'Decline insurance',
+    };
+    const ACTION_BUTTONS = {
+      hit: 'hit', stand: 'stand', double: 'double', split: 'split', surrender: 'surrender',
+      insurance: 'ins-yes', decline: 'ins-no',
+    };
+
+    // `avail` says which optional plays are allowed; the result falls back when one isn't.
+    function basicStrategy(cards, up, avail) {
+      const { total, soft } = handValue(cards);
+      const u = cardValue(up); // 2–11, ace is 11
+      const orDouble = fallback => (avail.double ? 'double' : fallback);
+      const isPair = cards.length === 2 && cardValue(cards[0]) === cardValue(cards[1]);
+
+      if (isPair && avail.split) {
+        const shouldSplit = {
+          11: true,                       // A,A
+          10: false,                      // 10,10
+          9: u !== 7 && u < 10,           // 9,9: 2–6, 8, 9
+          8: true,                        // 8,8
+          7: u <= 7,
+          6: u <= 6,
+          5: false,                       // play as hard 10
+          4: u === 5 || u === 6,
+          3: u <= 7,
+          2: u <= 7,
+        }[cardValue(cards[0])];
+        if (shouldSplit) return 'split';
+      }
+
+      if (avail.surrender && !soft && ((total === 16 && u >= 9) || (total === 15 && u === 10))) {
+        return 'surrender';
+      }
+
+      if (soft) {
+        if (total >= 19) return 'stand';
+        if (total === 18) return u >= 3 && u <= 6 ? orDouble('stand') : u <= 8 ? 'stand' : 'hit';
+        if (total === 17) return u >= 3 && u <= 6 ? orDouble('hit') : 'hit';
+        if (total >= 15) return u >= 4 && u <= 6 ? orDouble('hit') : 'hit';
+        if (total >= 13) return u >= 5 && u <= 6 ? orDouble('hit') : 'hit';
+        return 'hit'; // soft 12 (A,A when it can't be split)
+      }
+
+      if (total >= 17) return 'stand';
+      if (total >= 13) return u <= 6 ? 'stand' : 'hit';
+      if (total === 12) return u >= 4 && u <= 6 ? 'stand' : 'hit';
+      if (total === 11) return u <= 10 ? orDouble('hit') : 'hit';
+      if (total === 10) return u <= 9 ? orDouble('hit') : 'hit';
+      if (total === 9) return u >= 3 && u <= 6 ? orDouble('hit') : 'hit';
+      return 'hit';
+    }
+
+    function describeHand(cards, up) {
+      const { total, soft } = handValue(cards);
+      const vs = ` vs dealer ${up.r === 'A' ? 'ace' : cardValue(up)}`;
+      if (cards.length === 2 && cardValue(cards[0]) === cardValue(cards[1])) {
+        const v = cardValue(cards[0]);
+        return `pair of ${v === 11 ? 'aces' : v + 's'}` + vs;
+      }
+      return `${soft ? 'soft' : 'hard'} ${total}` + vs;
+    }
+
+    // The optimal play for the decision currently in front of the player.
+    function optimalDecision() {
+      if (phase === 'insurance') {
+        return {
+          action: 'decline',
+          situation: isNatural(hands[0]) ? 'even money is still insurance' : 'insurance loses money over time',
+        };
+      }
+      const h = current();
+      const up = dealer[0];
+      const action = basicStrategy(h.cards, up, { double: canDouble(), split: canSplit(), surrender: canSurrender() });
+      const ideal = basicStrategy(h.cards, up, {
+        double: h.cards.length === 2, split: true, surrender: hands.length === 1 && h.cards.length === 2,
+      });
+      let situation = describeHand(h.cards, up);
+      if (ideal !== action) situation += ` (${LABELS[ideal]} isn't available here)`;
+      return { action, situation };
+    }
+
+    function setFeedback(text, kind = '') {
+      els.feedback.textContent = text;
+      els.feedback.className = 'feedback' + (kind ? ' ' + kind : '');
+    }
+
+    // Scores a decision; call before the action changes the game state.
+    function grade(action) {
+      const best = optimalDecision();
+      const correct = action === best.action;
+      const wasHinted = hintUsed;
+      hintAction = null;
+      hintUsed = false;
+
+      if (wasHinted) {
+        setFeedback(`${correct ? '✓' : '✗'} ${LABELS[action]} — not scored (you used a hint).`, 'hint');
+        return;
+      }
+      stats.total++;
+      if (correct) {
+        stats.correct++;
+        stats.score++;
+        stats.best = Math.max(stats.best, stats.score);
+        setFeedback(`✓ ${LABELS[action]} is correct: ${best.situation}.`, 'good');
+        els.score.classList.remove('bump');
+        void els.score.offsetWidth; // restart the animation
+        els.score.classList.add('bump');
+      } else {
+        stats.score = 0;
+        setFeedback(`✗ ${LABELS[action]} isn't optimal. Basic strategy says ${LABELS[best.action]}: ${best.situation}. Score reset.`, 'bad');
+      }
+      saveStats();
+    }
+
+    function showHint() {
+      if (phase !== 'player' && phase !== 'insurance') return;
+      const best = optimalDecision();
+      hintAction = best.action;
+      hintUsed = true;
+      stats.score = 0;
+      saveStats();
+      setFeedback(`💡 Best move: ${LABELS[best.action]} (${best.situation}). Score reset to 0.`, 'hint');
+      render();
+    }
+
+    function resetStats() {
+      if (!confirm('Reset your trainer score, best score and accuracy?')) return;
+      stats = { score: 0, best: 0, correct: 0, total: 0 };
+      saveStats();
+      setFeedback('');
+      render();
+    }
+
+    // ---------- Rendering ----------
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    const money = n => '$' + n.toLocaleString(undefined, {
+      minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2,
+    });
+
+    function formatScore({ total, soft }) {
+      return soft && total < 21 ? `${total - 10} / ${total}` : String(total);
+    }
+
+    function cardEl(c, hidden) {
+      const d = document.createElement('div');
+      d.dataset.id = String(c.id);
+      d.dataset.hidden = String(hidden);
+      if (hidden) {
+        d.className = 'card back';
+        d.setAttribute('aria-label', 'Face-down card');
+        return d;
+      }
+      d.className = 'card' + (c.s === '♥' || c.s === '♦' ? ' red' : '');
+      d.setAttribute('aria-label', c.r + c.s);
+      d.innerHTML =
+        `<span class="corner tl">${c.r}<br>${c.s}</span>` +
+        `<span class="pip">${c.s}</span>` +
+        `<span class="corner br">${c.r}<br>${c.s}</span>`;
+      return d;
+    }
+
+    // Updates only the cards that changed, so existing cards don't re-animate.
+    function renderHand(el, cards, hideHole) {
+      cards.forEach((c, i) => {
+        const hidden = hideHole && i === 1;
+        const existing = el.children[i];
+        const sameCard = existing && existing.dataset.id === String(c.id);
+        if (sameCard && existing.dataset.hidden === String(hidden)) return;
+        const node = cardEl(c, hidden);
+        if (sameCard) node.classList.add('flip');
+        if (existing) el.replaceChild(node, existing);
+        else el.appendChild(node);
+      });
+      while (el.children.length > cards.length) el.lastChild.remove();
+    }
+
+    function makeHandWrap() {
+      const wrap = document.createElement('div');
+      wrap.className = 'hand-wrap';
+      wrap.innerHTML =
+        '<div class="hand"></div>' +
+        '<div class="hand-info"><span class="score"></span><span class="hand-bet"></span><span class="badge"></span></div>';
+      return wrap;
+    }
+
+    function setMessage(text, kind = '') {
+      els.message.textContent = text;
+      els.message.className = 'message' + (kind ? ' ' + kind : '');
+    }
+
+    function render() {
+      const betting = phase === 'betting';
+      els.bank.textContent = money(bank);
+      const staked = hands.reduce((sum, h) => sum + h.bet, 0);
+      els.bet.textContent = money(betting ? bet : staked);
+      els.insuranceInfo.textContent = !betting && insurance ? ` · Insurance: ${money(insurance)}` : '';
+
+      renderHand(els.dealerHand, dealer, holeHidden);
+      els.dealerScore.textContent = dealer.length
+        ? formatScore(handValue(holeHidden ? dealer.slice(0, 1) : dealer)) : '';
+
+      const wraps = els.playerHands.children;
+      while (wraps.length > hands.length) els.playerHands.lastChild.remove();
+      while (wraps.length < hands.length) els.playerHands.appendChild(makeHandWrap());
+      hands.forEach((h, i) => {
+        const wrap = wraps[i];
+        renderHand(wrap.querySelector('.hand'), h.cards, false);
+        wrap.querySelector('.score').textContent = h.cards.length ? formatScore(handValue(h.cards)) : '';
+        wrap.querySelector('.hand-bet').textContent = hands.length > 1 || h.doubled ? money(h.bet) : '';
+        const badge = h.result || (isBust(h) ? { text: 'Bust', kind: 'lose' } : null);
+        const badgeEl = wrap.querySelector('.badge');
+        badgeEl.textContent = badge ? badge.text : '';
+        badgeEl.className = 'badge' + (badge && badge.kind ? ' ' + badge.kind : '');
+        wrap.classList.toggle('active', phase === 'player' && hands.length > 1 && i === active);
+      });
+
+      els.betControls.classList.toggle('hidden', !betting);
+      els.insuranceControls.classList.toggle('hidden', phase !== 'insurance');
+      els.playControls.classList.toggle('hidden', betting || phase === 'insurance');
+
+      document.querySelectorAll('.chip').forEach(ch => {
+        ch.disabled = !betting || bet + Number(ch.dataset.v) > bank;
+      });
+      els.deal.disabled = els.clear.disabled = !betting || bet === 0;
+      els.reset.classList.toggle('hidden', !(betting && bank < MIN_BET));
+
+      els.hit.disabled = els.stand.disabled = !canAct();
+      els.double.disabled = !canDouble();
+      els.split.disabled = !canSplit();
+      els.surrender.disabled = !canSurrender();
+
+      els.score.textContent = stats.score;
+      els.best.textContent = stats.best;
+      els.accuracy.textContent = stats.total
+        ? `${Math.round((stats.correct / stats.total) * 100)}% (${stats.correct}/${stats.total})` : '—';
+      const deciding = phase === 'player' || phase === 'insurance';
+      els.hint.classList.toggle('hidden', !deciding);
+      els.hint.disabled = hintUsed;
+      for (const [action, id] of Object.entries(ACTION_BUTTONS)) {
+        $(id).classList.toggle('hinted', deciding && hintAction === action);
+      }
+
+      els.shoe.textContent = `${shoe.length} cards left in shoe`;
+    }
+
+    // ---------- Betting ----------
+    function addChip(v) {
+      if (phase !== 'betting' || bet + v > bank) return;
+      bet += v;
+      setMessage('');
+      render();
+    }
+
+    function resetBank() {
+      bank = START_BANK;
+      bet = 0;
+      saveBank();
+      setMessage('Fresh bankroll — place your bet');
+      render();
+    }
+
+    // ---------- Round flow ----------
+    async function deal() {
+      if (phase !== 'betting' || bet <= 0 || bet > bank) return;
+      phase = 'busy';
+      bank -= bet;
+      saveBank();
+      dealer = [];
+      hands = [{ cards: [], bet }];
+      active = 0;
+      insurance = 0;
+      insurancePaid = 0;
+      holeHidden = true;
+      setMessage('');
+
+      if (shoe.length < RESHUFFLE_AT) {
+        buildShoe();
+        setMessage('Shuffling a fresh shoe…');
+        render();
+        await sleep(800);
+        setMessage('');
+      }
+
+      const player = hands[0].cards;
+      for (const cards of [player, dealer, player, dealer]) {
+        cards.push(draw());
+        render();
+        await sleep(280);
+      }
+
+      const cost = hands[0].bet / 2;
+      if (dealer[0].r === 'A' && bank >= cost) {
+        phase = 'insurance';
+        if (isNatural(hands[0])) {
+          setMessage('You have Blackjack! Take even money?');
+          els.insYes.textContent = 'Even money';
+        } else {
+          setMessage(`Dealer shows an ace. Insurance for ${money(cost)}?`);
+          els.insYes.textContent = `Insurance (${money(cost)})`;
+        }
+        render();
+        return;
+      }
+      return peek();
+    }
+
+    function answerInsurance(take) {
+      if (phase !== 'insurance') return;
+      grade(take ? 'insurance' : 'decline');
+      if (take) {
+        insurance = hands[0].bet / 2;
+        bank -= insurance;
+        saveBank();
+      }
+      peek();
+    }
+
+    // Dealer checks the hole card for Blackjack when showing an ace or ten.
+    async function peek() {
+      phase = 'busy';
+      const up = dealer[0];
+      if (up.r === 'A' || cardValue(up) === 10) {
+        setMessage('Dealer checks for Blackjack…');
+        render();
+        await sleep(800);
+      }
+      if (isBlackjack(dealer)) {
+        if (insurance) insurancePaid = insurance * 3;
+        return finish();
+      }
+      if (insurance) setMessage(`No dealer Blackjack. Insurance lost.`, 'lose');
+      else setMessage('');
+      if (isNatural(hands[0])) return finish();
+      return playNextHand();
+    }
+
+    // Moves play to the next hand that still needs decisions, or to the dealer.
+    async function playNextHand() {
+      phase = 'busy';
+      while (active < hands.length) {
+        const h = hands[active];
+        if (h.cards.length === 1) {
+          // Split hands get their second card when their turn comes.
+          render();
+          await sleep(250);
+          h.cards.push(draw());
+          render();
+          await sleep(400);
+        }
+        // Split aces get only one card; a 21 needs no decision.
+        if (h.splitAces || handValue(h.cards).total >= 21) {
+          active++;
+          continue;
+        }
+        if (hands.length > 1) setMessage(`Playing hand ${active + 1} of ${hands.length}`);
+        phase = 'player';
+        render();
+        return;
+      }
+      return dealerTurn();
+    }
+
+    async function hit() {
+      if (!canAct()) return;
+      grade('hit');
+      const h = current();
+      h.cards.push(draw());
+      if (handValue(h.cards).total >= 21) {
+        phase = 'busy';
+        render();
+        await sleep(450);
+        active++;
+        return playNextHand();
+      }
+      render();
+    }
+
+    function stand() {
+      if (!canAct()) return;
+      grade('stand');
+      active++;
+      playNextHand();
+    }
+
+    async function doubleDown() {
+      if (!canDouble()) return;
+      grade('double');
+      phase = 'busy';
+      const h = current();
+      bank -= h.bet;
+      h.bet *= 2;
+      h.doubled = true;
+      saveBank();
+      h.cards.push(draw());
+      render();
+      await sleep(500);
+      active++;
+      return playNextHand();
+    }
+
+    async function split() {
+      if (!canSplit()) return;
+      grade('split');
+      phase = 'busy';
+      const h = current();
+      bank -= h.bet;
+      saveBank();
+      const aces = h.cards[0].r === 'A';
+      const moved = h.cards.pop();
+      h.split = true;
+      h.splitAces = aces;
+      hands.splice(active + 1, 0, { cards: [moved], bet: h.bet, split: true, splitAces: aces });
+      render();
+      await sleep(300);
+      return playNextHand();
+    }
+
+    function surrender() {
+      if (!canSurrender()) return;
+      grade('surrender');
+      current().surrendered = true;
+      finish();
+    }
+
+    async function dealerTurn() {
+      phase = 'busy';
+      holeHidden = false;
+      render();
+      await sleep(550);
+      // The dealer only draws if at least one of your hands is still live.
+      const live = hands.some(h => !h.surrendered && !isBust(h));
+      while (live && handValue(dealer).total < 17) {
+        dealer.push(draw());
+        render();
+        await sleep(600);
+      }
+      finish();
+    }
+
+    function settleHand(h, d, dealerBJ) {
+      const p = handValue(h.cards).total;
+      const r = (payout, text, kind, msg) => ({ payout, badge: { text, kind }, msg });
+      if (h.surrendered) return r(h.bet / 2, 'Surrender', 'lose', `You surrender — ${money(h.bet / 2)} returned.`);
+      if (p > 21) return r(0, 'Bust', 'lose', `Bust! You lose ${money(h.bet)}.`);
+      const natural = isNatural(h);
+      if (natural && dealerBJ) return r(h.bet, 'Push', '', 'Both have Blackjack — push.');
+      if (natural) return r(h.bet * 2.5, 'Blackjack', 'win', `Blackjack! You win ${money(h.bet * 1.5)}!`);
+      if (dealerBJ) return r(0, 'Lose', 'lose', `Dealer has Blackjack. You lose ${money(h.bet)}.`);
+      if (d > 21) return r(h.bet * 2, 'Win', 'win', `Dealer busts! You win ${money(h.bet)}!`);
+      if (p > d) return r(h.bet * 2, 'Win', 'win', `You win ${money(h.bet)}! (${p} vs ${d})`);
+      if (p < d) return r(0, 'Lose', 'lose', `Dealer wins, ${d} to ${p}.`);
+      return r(h.bet, 'Push', '', `Push at ${p}.`);
+    }
+
+    async function finish() {
+      phase = 'busy';
+      if (holeHidden) {
+        holeHidden = false;
+        render();
+        await sleep(450);
+      }
+
+      const d = handValue(dealer).total;
+      const dealerBJ = isBlackjack(dealer);
+      const results = hands.map(h => settleHand(h, d, dealerBJ));
+      hands.forEach((h, i) => { h.result = results[i].badge; });
+
+      const returned = results.reduce((sum, r) => sum + r.payout, 0) + insurancePaid;
+      const staked = hands.reduce((sum, h) => sum + h.bet, 0) + insurance;
+      const net = returned - staked;
+      bank += returned;
+      saveBank();
+
+      let msg;
+      if (insurance && isNatural(hands[0])) {
+        msg = `Even money — you win ${money(hands[0].bet)}.`;
+      } else {
+        msg = hands.length === 1 ? results[0].msg
+          : net > 0 ? `You win ${money(net)} overall.`
+          : net < 0 ? `You lose ${money(-net)} overall.`
+          : 'You break even.';
+        if (insurancePaid) msg += ` Insurance pays ${money(insurance * 2)}.`;
+        else if (insurance) msg += ' Insurance lost.';
+      }
+      if (bank < MIN_BET) msg += ' Out of chips!';
+      setMessage(msg, net > 0 ? 'win' : net < 0 ? 'lose' : '');
+
+      phase = 'betting';
+      if (bet > bank) bet = 0; // keep the same bet for the next round if affordable
+      render();
+    }
+
+    // ---------- Wiring ----------
+    document.querySelectorAll('.chip').forEach(ch =>
+      ch.addEventListener('click', () => addChip(Number(ch.dataset.v))));
+    els.clear.addEventListener('click', () => { bet = 0; render(); });
+    els.deal.addEventListener('click', deal);
+    els.reset.addEventListener('click', resetBank);
+    els.insYes.addEventListener('click', () => answerInsurance(true));
+    els.insNo.addEventListener('click', () => answerInsurance(false));
+    els.hit.addEventListener('click', hit);
+    els.stand.addEventListener('click', stand);
+    els.double.addEventListener('click', doubleDown);
+    els.split.addEventListener('click', split);
+    els.surrender.addEventListener('click', surrender);
+    els.hint.addEventListener('click', showHint);
+    els.resetStats.addEventListener('click', resetStats);
+
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+      const k = e.key.toLowerCase();
+      const actions = {
+        h: hit, s: stand, d: doubleDown, p: split, r: surrender, b: showHint,
+        y: () => answerInsurance(true), n: () => answerInsurance(false),
+      };
+      if (k === 'enter' && phase === 'betting') { e.preventDefault(); deal(); }
+      else if (actions[k]) { e.preventDefault(); actions[k](); }
+    });
+
+    buildShoe();
+    if (bank < MIN_BET) setMessage('Out of chips!');
+    render();
+  })();
+  </script>
+</body>
+</html>
