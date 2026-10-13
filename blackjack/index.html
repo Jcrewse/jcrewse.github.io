@@ -227,6 +227,102 @@
     button.hinted { outline: 3px solid var(--gold); outline-offset: 3px; animation: pulse 1s ease-in-out infinite; }
     @keyframes pulse { 50% { outline-color: rgba(242, 201, 76, .3); } }
 
+    /* ---------- Strategy chart ---------- */
+    .c-H { background: #e57373; }
+    .c-S { background: #ffd54f; }
+    .c-D { background: #64b5f6; }
+    .c-P { background: #81c784; }
+    .c-R { background: #ce93d8; }
+    .c-N { background: #cfd8dc; }
+
+    dialog.chart-dialog {
+      width: min(1180px, 96vw);
+      max-height: 92vh;
+      overflow: auto;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 14px;
+      background: #0f2e1d;
+      color: #fff;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+    }
+    dialog.chart-dialog::backdrop { background: rgba(0, 0, 0, .6); }
+    .chart-panel { padding: 18px 20px 20px; }
+    .chart-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .chart-head h2 { margin: 0; font-size: 1.25rem; letter-spacing: 1px; }
+    .chart-close {
+      padding: 4px 10px;
+      background: transparent;
+      color: #fff;
+      box-shadow: none;
+      font-size: 1.1rem;
+    }
+    .chart-situation { margin: 12px 0 16px; font-size: 1.05rem; text-align: center; }
+    .chart-situation small { display: block; margin-top: 6px; font-size: .85rem; opacity: .8; }
+    .pill {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 3px 12px;
+      border-radius: 14px;
+      color: #1a1a1a;
+      font-weight: 800;
+    }
+    .chart-tables {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 18px 20px;
+    }
+    .chart-tables.has-hl table:not(.hl-table) { opacity: .5; }
+    table.chart { border-collapse: separate; border-spacing: 2px; font-size: .8rem; transition: opacity .2s; }
+    table.chart caption { margin-bottom: 4px; font-weight: 700; text-align: left; }
+    table.chart caption small { font-weight: 400; opacity: .7; }
+    table.chart th { padding: 0 4px; font-weight: 600; opacity: .85; white-space: nowrap; }
+    table.chart thead th { height: 22px; }
+    table.chart tbody th { text-align: right; }
+    table.chart td {
+      position: relative;
+      width: 28px;
+      height: 24px;
+      border-radius: 3px;
+      color: #1a1a1a;
+      font-weight: 700;
+      text-align: center;
+      transition: opacity .2s, transform .2s;
+    }
+    table.chart th.hl-axis { color: var(--gold); opacity: 1; }
+    table.chart.hl-table td { opacity: .3; }
+    table.chart.hl-table td.in-line { opacity: .8; }
+    table.chart td.hl {
+      z-index: 1;
+      opacity: 1;
+      transform: scale(1.35);
+      outline: 3px solid #fff;
+      box-shadow: 0 0 0 6px rgba(242, 201, 76, .55), 0 4px 12px rgba(0, 0, 0, .5);
+      animation: cell-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes cell-pulse { 50% { box-shadow: 0 0 0 10px rgba(242, 201, 76, .15), 0 4px 12px rgba(0, 0, 0, .5); } }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 16px;
+      margin: 18px 0 6px;
+      font-size: .85rem;
+    }
+    .chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .chart-legend b {
+      display: inline-block;
+      min-width: 26px;
+      padding: 2px 4px;
+      border-radius: 3px;
+      color: #1a1a1a;
+      text-align: center;
+    }
+    .chart-note { margin: 8px 0 14px; font-size: .8rem; opacity: .75; text-align: center; }
+    .chart-actions { text-align: center; }
+
     .chip {
       width: 60px;
       height: 60px;
@@ -270,6 +366,9 @@
       .card .corner { font-size: .82rem; }
       .chip { width: 52px; height: 52px; }
       button { padding: 9px 13px; }
+      .chart-panel { padding: 14px 10px 16px; }
+      table.chart { font-size: .72rem; }
+      table.chart td { width: 25px; height: 22px; }
     }
   </style>
 </head>
@@ -332,6 +431,31 @@
     <div class="feedback" id="feedback" aria-live="polite"></div>
   </main>
 
+  <dialog class="chart-dialog" id="chart-dialog" aria-labelledby="chart-title">
+   <div class="chart-panel">
+    <div class="chart-head">
+      <h2 id="chart-title">Basic strategy chart</h2>
+      <button class="chart-close" id="chart-close" aria-label="Close chart">✕</button>
+    </div>
+    <p class="chart-situation" id="chart-situation"></p>
+    <div class="chart-tables" id="chart-tables"></div>
+    <div class="chart-legend">
+      <span><b class="c-H">H</b> Hit</span>
+      <span><b class="c-S">S</b> Stand</span>
+      <span><b class="c-D">D</b> Double, otherwise hit</span>
+      <span><b class="c-D">Ds</b> Double, otherwise stand</span>
+      <span><b class="c-P">P</b> Split</span>
+      <span><b class="c-R">R</b> Surrender, otherwise hit</span>
+    </div>
+    <p class="chart-note">
+      Rows are your hand, columns are the dealer's up card.
+      For 6 decks, dealer stands on soft 17, double after split, late surrender.
+      Never take insurance or even money.
+    </p>
+    <div class="chart-actions"><button class="primary" id="chart-ok" autofocus>Got it</button></div>
+   </div>
+  </dialog>
+
   <footer>
     6 decks · Dealer stands on all 17s · Blackjack pays 3:2 · <span id="shoe"></span><br>
     Keys: <kbd>H</kbd> hit · <kbd>S</kbd> stand · <kbd>D</kbd> double · <kbd>P</kbd> split ·
@@ -341,7 +465,7 @@
       <ul>
         <li>Every decision is checked against basic strategy for these house rules (6 decks, dealer stands on soft 17, double after split, late surrender).</li>
         <li>Each optimal decision adds 1 to your score. A mistake resets your score to 0.</li>
-        <li><strong>Show best move</strong> highlights the optimal play but resets your score to 0, and that decision isn't scored.</li>
+        <li><strong>Show best move</strong> opens a basic strategy chart with your hand highlighted, and marks the right button. It resets your score to 0, and that decision isn't scored.</li>
         <li>If the best play isn't available (for example, you can't afford to double), the next-best play counts as correct.</li>
         <li>Basic strategy always declines insurance and even money.</li>
         <li>Accuracy counts every scored decision. Your best score and accuracy are saved in this browser.</li>
@@ -386,6 +510,8 @@
       hit: $('hit'), stand: $('stand'), double: $('double'), split: $('split'), surrender: $('surrender'),
       score: $('score'), best: $('best'), accuracy: $('accuracy'), resetStats: $('reset-stats'),
       hint: $('hint'), feedback: $('feedback'),
+      chartDialog: $('chart-dialog'), chartSituation: $('chart-situation'), chartTables: $('chart-tables'),
+      chartClose: $('chart-close'), chartOk: $('chart-ok'),
     };
 
     let shoe = [];
@@ -585,6 +711,110 @@
       saveStats();
     }
 
+    // ---------- Strategy chart (generated from basicStrategy so it always matches the grader) ----------
+    const UPCARDS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A'];
+    // [row key, row label, representative two-card hand]
+    const CHART = [
+      {
+        id: 'hard', title: 'Hard totals',
+        rows: [
+          ['8', '5–8', ['6', '2']], ['9', '9', ['5', '4']], ['10', '10', ['6', '4']], ['11', '11', ['6', '5']],
+          ['12', '12', ['10', '2']], ['13', '13', ['10', '3']], ['14', '14', ['10', '4']],
+          ['15', '15', ['10', '5']], ['16', '16', ['10', '6']], ['17', '17+', ['10', '7']],
+        ],
+      },
+      {
+        id: 'soft', title: 'Soft totals',
+        rows: ['2', '3', '4', '5', '6', '7', '8', '9'].map(r => [String(11 + Number(r)), `A,${r}`, ['A', r]]),
+      },
+      {
+        id: 'pairs', title: 'Pairs',
+        rows: [
+          ...['2', '3', '4', '5', '6', '7', '8', '9', '10'].map(r => [r, `${r},${r}`, [r, r]]),
+          ['11', 'A,A', ['A', 'A']],
+        ],
+      },
+    ];
+    const ACTION_CLASS = { hit: 'c-H', stand: 'c-S', double: 'c-D', split: 'c-P', surrender: 'c-R', decline: 'c-N' };
+    const CODE_ACTION = { H: 'hit', S: 'stand', D: 'double', P: 'split', R: 'surrender' };
+
+    function chartCode(cards, up, isPairRow) {
+      const all = { double: true, split: isPairRow, surrender: true };
+      const action = basicStrategy(cards, up, all);
+      if (action === 'double') {
+        return basicStrategy(cards, up, { ...all, double: false }) === 'stand' ? 'Ds' : 'D';
+      }
+      return { hit: 'H', stand: 'S', split: 'P', surrender: 'R' }[action];
+    }
+
+    function buildChart() {
+      const card = r => ({ r, s: '♠' });
+      els.chartTables.innerHTML = CHART.map(t => `
+        <table class="chart" data-table="${t.id}">
+          <caption>${t.title} <small>· dealer up card →</small></caption>
+          <thead><tr><th></th>${UPCARDS.map(u => `<th scope="col" data-col="${u}">${u}</th>`).join('')}</tr></thead>
+          <tbody>${t.rows.map(([key, label, ranks]) => `
+            <tr data-row="${key}"><th scope="row">${label}</th>${UPCARDS.map(u => {
+              const code = chartCode(ranks.map(card), card(u), t.id === 'pairs');
+              return `<td class="c-${code[0]}" data-col="${u}">${code}</td>`;
+            }).join('')}</tr>`).join('')}
+          </tbody>
+        </table>`).join('');
+    }
+
+    // Where the current hand sits on the chart, or null when there's no hand decision (insurance).
+    function chartPosition() {
+      if (phase !== 'player') return null;
+      const h = current();
+      const up = dealer[0];
+      const col = up.r === 'A' ? 'A' : String(cardValue(up));
+      const { total, soft } = handValue(h.cards);
+      if (h.cards.length === 2 && cardValue(h.cards[0]) === cardValue(h.cards[1])) {
+        return { table: 'pairs', row: String(cardValue(h.cards[0])), col };
+      }
+      if (soft) return { table: 'soft', row: String(total), col };
+      return { table: 'hard', row: String(Math.min(17, Math.max(8, total))), col };
+    }
+
+    function highlightChart(pos) {
+      const root = els.chartTables;
+      root.querySelectorAll('.hl, .hl-axis, .hl-table, .in-line')
+        .forEach(el => el.classList.remove('hl', 'hl-axis', 'hl-table', 'in-line'));
+      root.classList.toggle('has-hl', !!pos);
+      if (!pos) return null;
+      const table = root.querySelector(`table[data-table="${pos.table}"]`);
+      const row = table && table.querySelector(`tr[data-row="${pos.row}"]`);
+      if (!row) return null;
+      table.classList.add('hl-table');
+      row.querySelector('th').classList.add('hl-axis');
+      table.querySelector(`thead th[data-col="${pos.col}"]`).classList.add('hl-axis');
+      row.querySelectorAll('td').forEach(td => td.classList.add('in-line'));
+      table.querySelectorAll(`td[data-col="${pos.col}"]`).forEach(td => td.classList.add('in-line'));
+      const cell = row.querySelector(`td[data-col="${pos.col}"]`);
+      cell.classList.add('hl');
+      return cell;
+    }
+
+    function openChart(best) {
+      const intro = phase === 'insurance' ? 'Insurance offered' : `Your hand: ${best.situation}`;
+      els.chartSituation.innerHTML = '';
+      els.chartSituation.append(`${intro} →`);
+      const pill = document.createElement('span');
+      pill.className = 'pill ' + ACTION_CLASS[best.action];
+      pill.textContent = LABELS[best.action];
+      els.chartSituation.append(pill);
+      const cell = highlightChart(chartPosition());
+      // e.g. the chart says Surrender, but surrender isn't allowed on a 3-card hand.
+      const chartAction = cell && CODE_ACTION[cell.textContent[0]];
+      if (chartAction && chartAction !== best.action) {
+        const note = document.createElement('small');
+        note.textContent = `The chart's first choice is ${LABELS[chartAction]}, but that isn't allowed here, so ${LABELS[best.action]}.`;
+        els.chartSituation.append(note);
+      }
+      els.chartDialog.showModal();
+      if (cell) cell.scrollIntoView({ block: 'center', inline: 'center' });
+    }
+
     function showHint() {
       if (phase !== 'player' && phase !== 'insurance') return;
       const best = optimalDecision();
@@ -594,6 +824,7 @@
       saveStats();
       setFeedback(`💡 Best move: ${LABELS[best.action]} (${best.situation}). Score reset to 0.`, 'hint');
       render();
+      openChart(best);
     }
 
     function resetStats() {
@@ -978,9 +1209,15 @@
     els.surrender.addEventListener('click', surrender);
     els.hint.addEventListener('click', showHint);
     els.resetStats.addEventListener('click', resetStats);
+    const closeChart = () => els.chartDialog.close();
+    els.chartClose.addEventListener('click', closeChart);
+    els.chartOk.addEventListener('click', closeChart);
+    // Clicking the dimmed backdrop (outside the panel) closes the chart.
+    els.chartDialog.addEventListener('click', e => { if (e.target === els.chartDialog) closeChart(); });
 
     document.addEventListener('keydown', e => {
       if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+      if (els.chartDialog.open) return; // the dialog handles its own keys (Esc closes it)
       const k = e.key.toLowerCase();
       const actions = {
         h: hit, s: stand, d: doubleDown, p: split, r: surrender, b: showHint,
@@ -991,6 +1228,7 @@
     });
 
     buildShoe();
+    buildChart();
     if (bank < MIN_BET) setMessage('Out of chips!');
     render();
   })();
