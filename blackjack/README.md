@@ -90,7 +90,8 @@ At any moment the game is fully described by a handful of variables declared nea
 | `insurance` | The insurance bet this round, if any. |
 | `phase` | What the game is waiting for (see below). |
 | `holeHidden` | Whether the dealer's second card is still face-down. |
-| `stats` | The trainer score, best score and accuracy counts. |
+| `stats` | The trainer score, best score, accuracy counts, and any scoring pause left after hiding the chart. |
+| `chartMode` | Whether the strategy chart is shown beside the table (scoring paused). |
 
 A **card** is a small object like `{ r: 'K', s: '♥', id: 17 }` (rank, suit, and a unique ID used for animations).
 
@@ -199,6 +200,7 @@ const RESHUFFLE_AT = ...; // reshuffle when 25% of cards remain
 const MAX_HANDS = 4;      // most hands you can split into
 const START_BANK = 1000;  // starting money (and reset amount)
 const MIN_BET = 5;        // below this you're "out of chips"
+const CHART_COOLDOWN_HANDS = 2; // hands scoring stays paused after hiding the chart
 ```
 
 Changing these is safe. Keep in mind that the trainer's strategy (section 6) is tuned for 6 decks.
@@ -255,6 +257,27 @@ To highlight the current situation:
 - **`highlightChart()`** adds CSS classes to fade the other tables and cells, turn the row and column labels gold, and enlarge and pulse the matching cell.
 - If the chart's first choice isn't allowed (like **R** on a 3-card hand, because surrender is only allowed on the first two cards), the headline explains what to do instead.
 
+### Chart beside the table (practice mode)
+
+The **📊 Show strategy chart** button, below the Hit/Stand buttons (or the C key), runs **`toggleChart()`**, which flips the `chartMode` variable. When it's on:
+
+- A second copy of the chart appears in a side panel (an `<aside>` element). On wide screens it sits to the right of the table; on screens narrower than 1000 pixels it sits below. The layout switch is a CSS rule that only applies when the page has the `chart-mode` class, inside `@media (min-width: 1000px)`.
+- **`updateSideChart()`** runs every time the screen is redrawn, so the highlight follows your hand as cards arrive and as you move between split hands. It skips redrawing if the situation hasn't changed, so the pulsing highlight doesn't flicker.
+- **Scoring is paused.** `grade()` still tells you whether a play was right, marked "Practice: not scored", but it doesn't touch the score, best or accuracy. The score bar gets the `paused` class, which greys it out.
+- The hint button is hidden, since the answer is already on screen.
+
+**Hiding the chart starts a two-hand pause.** Otherwise you could peek at the answer, hide the chart, and still earn the point. `toggleChart()` sets `stats.pausedHands` to 2 (the `CHART_COOLDOWN_HANDS` setting at the top of the script). Then:
+
+- When a hand is dealt while the pause is active, `deal()` marks that round with `roundInCooldown`. When the round finishes, `finish()` counts it down by one.
+- A hand that was already in progress when you hid the chart isn't marked, so it doesn't count toward the two.
+- While `pausedHands` is above 0, `grade()` gives feedback but doesn't score, and the score bar stays greyed out.
+- **`scoringPauseNote()`** writes the message under the score bar, for example "Scoring resumes after this hand and 1 more."
+- `pausedHands` is saved with the other stats, so reloading the page doesn't skip the pause.
+
+Your score, best and accuracy aren't changed by any of this; they simply wait until scoring resumes.
+
+Both copies of the chart are built by the same `buildChart()` function. Highlighting is done by the same `highlightChart()`, which is given the copy to work on.
+
 Chart colors are defined once in CSS:
 
 ```css
@@ -271,12 +294,13 @@ Change a color here and it changes everywhere: chart cells, the legend and the a
 
 ## 7. Saving progress
 
-The game remembers the bank and trainer stats between visits using **`localStorage`**, a small storage area the browser keeps for each website. Two entries are used:
+The game remembers the bank, trainer stats and chart setting between visits using **`localStorage`**, a small storage area the browser keeps for each website. Three entries are used:
 
 | Key | Contents |
 |---|---|
 | `blackjack-bank` | The bank balance, e.g. `"1250"` |
-| `blackjack-trainer` | Trainer stats, e.g. `{"score":3,"best":12,"correct":40,"total":46}` |
+| `blackjack-trainer` | Trainer stats, e.g. `{"score":3,"best":12,"correct":40,"total":46,"pausedHands":0}` (`pausedHands` is the scoring pause left after hiding the chart) |
+| `blackjack-show-chart` | `"1"` if the chart beside the table is switched on, `"0"` if not |
 
 Things to know:
 
@@ -285,7 +309,7 @@ Things to know:
 - Clearing browser data for the site erases both.
 - The bet is taken from the bank and saved at the moment of dealing, so refreshing the page mid-hand can't be used to undo a losing hand.
 
-The functions involved are `loadBank` / `saveBank` and `loadStats` / `saveStats`. They're wrapped in `try … catch` so the game still works (just without saving) in browsers where storage is blocked.
+The functions involved are `loadBank` / `saveBank`, `loadStats` / `saveStats` and `loadChartPref` / `saveChartPref`. They're wrapped in `try … catch` so the game still works (just without saving) in browsers where storage is blocked.
 
 ---
 
@@ -336,8 +360,8 @@ Either way, GitHub's "Build and Deploy" workflow (under the repo's **Actions** t
 
 In order from top to bottom:
 
-1. **`<style>`**: all the CSS, grouped by area (layout, cards, buttons, trainer bar, strategy chart, phone-size adjustments under `@media (max-width: 520px)`).
-2. **`<body>`**: the HTML: header and bank, trainer bar, dealer area, message line, player area, bet controls, insurance controls, play controls, hint button, feedback line, the chart `<dialog>`, and the footer with the rules.
+1. **`<style>`**: all the CSS, grouped by area (layout, cards, buttons, trainer bar, strategy chart, chart-beside-the-table mode, phone-size adjustments under `@media (max-width: 520px)`).
+2. **`<body>`**: the HTML: the header (title), then a `layout` wrapper holding the playing field (`<main>`: trainer bar, dealer area, message line, player area, bet and bank amounts, bet controls (Deal/Clear above the chips), insurance controls, play controls, the hint and chart buttons, feedback line) and the side chart (`<aside>`). After that come the pop-up chart `<dialog>` and the footer with the rules.
 3. **`<script>`**: the JavaScript, in labeled sections:
    - Constants and the `els` element lookup
    - State variables
@@ -345,9 +369,9 @@ In order from top to bottom:
    - **Cards:** shoe, drawing, hand values
    - **Rules for available actions:** `canDouble`, `canSplit`, …
    - **Basic strategy:** `basicStrategy`, `optimalDecision`, `grade`
-   - **Strategy chart:** `buildChart`, `chartPosition`, `highlightChart`, `openChart`, `showHint`
+   - **Strategy chart:** `buildChart`, `chartPosition`, `highlightChart`, `openChart`, `updateSideChart`, `toggleChart`, `showHint`
    - **Rendering:** `render` and helpers for drawing cards
    - **Betting:** chips and bank reset
    - **Round flow:** `deal` → `peek` → `playNextHand` → actions → `dealerTurn` → `finish`
    - **Wiring:** connecting buttons and keys to functions
-   - Start-up: build the shoe, build the chart, draw the first screen
+   - Start-up: build the shoe, build both copies of the chart, draw the first screen

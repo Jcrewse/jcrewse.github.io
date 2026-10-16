@@ -38,7 +38,6 @@
     main {
       width: 100%;
       max-width: 960px;
-      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -152,8 +151,10 @@
     .message.win { color: var(--gold); }
     .message.lose { color: var(--lose); }
 
+    .money { display: flex; flex-direction: column; align-items: center; gap: 2px; }
     .bet { font-size: 1.1rem; }
     .bet strong { color: var(--gold); }
+    .bet-controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
     .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
 
     button {
@@ -323,6 +324,69 @@
     .chart-note { margin: 8px 0 14px; font-size: .8rem; opacity: .75; text-align: center; }
     .chart-actions { text-align: center; }
 
+    /* ---------- Chart-beside-the-table mode ---------- */
+    .layout {
+      width: 100%;
+      max-width: 960px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    body.chart-mode header, body.chart-mode .layout { max-width: 1440px; }
+    .assist-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
+    .trainer { transition: opacity .2s, filter .2s; }
+    .trainer.paused { opacity: .4; filter: grayscale(1); }
+    .trainer.paused button { pointer-events: none; }
+    .trainer-note { margin-top: -6px; font-size: .8rem; font-style: italic; opacity: .8; }
+    .chart-toggle {
+      padding: 6px 14px;
+      font-size: .85rem;
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .4);
+      box-shadow: none;
+    }
+    .chart-toggle:hover:not(:disabled) { filter: none; background: rgba(255, 255, 255, .22); }
+    .chart-toggle[aria-pressed="true"] { background: var(--gold); color: #3a2a00; border-color: var(--gold); }
+    .side-chart {
+      width: calc(100% - 32px);
+      max-width: 420px;
+      margin: 0 16px 24px;
+      padding: 12px 14px 16px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 14px;
+      background: rgba(0, 0, 0, .22);
+    }
+    .side-chart h2 { margin: 0; font-size: 1rem; letter-spacing: 1px; text-align: center; }
+    .side-chart .chart-situation { margin: 6px 0 12px; font-size: .95rem; }
+    .side-chart .chart-tables { flex-direction: column; align-items: center; gap: 14px; }
+    .side-chart .chart-legend { margin-top: 12px; gap: 4px 10px; font-size: .75rem; }
+    @media (min-width: 1000px) {
+      body.chart-mode .layout { flex-direction: row; align-items: flex-start; justify-content: center; }
+      body.chart-mode main { flex: 1 1 auto; min-width: 0; }
+      /* Heading, answer and legend stay put; only the tables scroll. */
+      .side-chart {
+        position: sticky;
+        top: 12px;
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        width: auto;
+        max-height: calc(100vh - 84px); /* fits below the header without scrolling the page */
+        margin: 0 16px 24px 0;
+        overflow: hidden;
+      }
+      .side-chart .chart-tables {
+        flex: 1 1 auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        min-height: 0;
+        padding: 8px 12px;
+        overflow-y: auto;
+      }
+    }
+
     .chip {
       width: 60px;
       height: 60px;
@@ -375,16 +439,17 @@
 <body>
   <header>
     <h1>♠ BLACKJACK TRAINER ♠</h1>
-    <div class="bank">Bank: <strong id="bank">$1,000</strong></div>
   </header>
 
+  <div class="layout">
   <main>
-    <div class="trainer" aria-live="polite">
+    <div class="trainer" id="trainer" aria-live="polite">
       <span>Score: <strong id="score">0</strong></span>
       <span>Best: <strong id="best">0</strong></span>
       <span>Accuracy: <strong id="accuracy">—</strong></span>
       <button id="reset-stats" class="link">reset stats</button>
     </div>
+    <div class="trainer-note hidden" id="trainer-note"></div>
 
     <section class="area">
       <div class="label">Dealer <span class="score" id="dealer-score"></span></div>
@@ -398,16 +463,23 @@
       <div class="hands" id="player-hands"></div>
     </section>
 
-    <div class="bet">Bet: <strong id="bet">$0</strong><span id="insurance-info"></span></div>
+    <div class="money">
+      <div class="bet">Bet: <strong id="bet">$0</strong><span id="insurance-info"></span></div>
+      <div class="bank">Bank: <strong id="bank">$1,000</strong></div>
+    </div>
 
-    <div class="controls" id="bet-controls">
-      <button class="chip" data-v="5">5</button>
-      <button class="chip" data-v="25">25</button>
-      <button class="chip" data-v="100">100</button>
-      <button class="chip" data-v="500">500</button>
-      <button id="clear">Clear</button>
-      <button id="deal" class="primary">Deal</button>
-      <button id="reset" class="primary hidden">Reset bank to $1,000</button>
+    <div class="bet-controls" id="bet-controls">
+      <div class="controls">
+        <button id="deal" class="primary">Deal</button>
+        <button id="clear">Clear</button>
+        <button id="reset" class="primary hidden">Reset bank to $1,000</button>
+      </div>
+      <div class="controls">
+        <button class="chip" data-v="5">5</button>
+        <button class="chip" data-v="25">25</button>
+        <button class="chip" data-v="100">100</button>
+        <button class="chip" data-v="500">500</button>
+      </div>
     </div>
 
     <div class="controls hidden" id="insurance-controls">
@@ -427,9 +499,27 @@
       </div>
     </div>
 
-    <button id="hint" class="hint-btn hidden">💡 Show best move (resets score)</button>
+    <div class="assist-row">
+      <button id="hint" class="hint-btn hidden">💡 Show best move (resets score)</button>
+      <button id="chart-toggle" class="chart-toggle" aria-pressed="false">📊 Show strategy chart</button>
+    </div>
     <div class="feedback" id="feedback" aria-live="polite"></div>
   </main>
+
+  <aside class="side-chart hidden" id="side-chart" aria-label="Basic strategy chart">
+    <h2>Basic strategy</h2>
+    <p class="chart-situation" id="side-situation"></p>
+    <div class="chart-tables" id="side-chart-tables"></div>
+    <div class="chart-legend">
+      <span><b class="c-H">H</b> Hit</span>
+      <span><b class="c-S">S</b> Stand</span>
+      <span><b class="c-D">D</b> Double, else hit</span>
+      <span><b class="c-D">Ds</b> Double, else stand</span>
+      <span><b class="c-P">P</b> Split</span>
+      <span><b class="c-R">R</b> Surrender, else hit</span>
+    </div>
+  </aside>
+  </div>
 
   <dialog class="chart-dialog" id="chart-dialog" aria-labelledby="chart-title">
    <div class="chart-panel">
@@ -459,13 +549,14 @@
   <footer>
     6 decks · Dealer stands on all 17s · Blackjack pays 3:2 · <span id="shoe"></span><br>
     Keys: <kbd>H</kbd> hit · <kbd>S</kbd> stand · <kbd>D</kbd> double · <kbd>P</kbd> split ·
-    <kbd>R</kbd> surrender · <kbd>Y</kbd>/<kbd>N</kbd> insurance · <kbd>B</kbd> best move · <kbd>Enter</kbd> deal
+    <kbd>R</kbd> surrender · <kbd>Y</kbd>/<kbd>N</kbd> insurance · <kbd>B</kbd> best move · <kbd>C</kbd> chart · <kbd>Enter</kbd> deal
     <details>
       <summary>How the trainer works</summary>
       <ul>
         <li>Every decision is checked against basic strategy for these house rules (6 decks, dealer stands on soft 17, double after split, late surrender).</li>
         <li>Each optimal decision adds 1 to your score. A mistake resets your score to 0.</li>
         <li><strong>Show best move</strong> opens a basic strategy chart with your hand highlighted, and marks the right button. It resets your score to 0, and that decision isn't scored.</li>
+        <li><strong>Show strategy chart</strong> keeps the chart beside the table (below it on phones), with your hand highlighted as you play. Scoring is paused while it's on, and for two complete hands after you hide it (a hand already in progress doesn't count). Your score, best and accuracy are kept for when scoring resumes.</li>
         <li>If the best play isn't available (for example, you can't afford to double), the next-best play counts as correct.</li>
         <li>Basic strategy always declines insurance and even money.</li>
         <li>Accuracy counts every scored decision. Your best score and accuracy are saved in this browser.</li>
@@ -498,6 +589,10 @@
     const MIN_BET = 5;
     const STORAGE_KEY = 'blackjack-bank';
     const STATS_KEY = 'blackjack-trainer';
+    const CHART_KEY = 'blackjack-show-chart';
+    // pausedHands: complete hands left before scoring resumes after the chart was hidden.
+    const FRESH_STATS = { score: 0, best: 0, correct: 0, total: 0, pausedHands: 0 };
+    const CHART_COOLDOWN_HANDS = 2;
 
     const $ = id => document.getElementById(id);
     const els = {
@@ -512,6 +607,8 @@
       hint: $('hint'), feedback: $('feedback'),
       chartDialog: $('chart-dialog'), chartSituation: $('chart-situation'), chartTables: $('chart-tables'),
       chartClose: $('chart-close'), chartOk: $('chart-ok'),
+      trainer: $('trainer'), trainerNote: $('trainer-note'), chartToggle: $('chart-toggle'),
+      sideChart: $('side-chart'), sideSituation: $('side-situation'), sideChartTables: $('side-chart-tables'),
     };
 
     let shoe = [];
@@ -526,17 +623,26 @@
     let insurancePaid = 0; // amount returned from insurance this round
     let phase = 'betting'; // betting | insurance | player | busy
     let holeHidden = true;
-    let stats = loadStats(); // { score, best, correct, total }
+    let stats = loadStats(); // { score, best, correct, total, pausedHands }
     let hintAction = null;   // action highlighted by the hint button
     let hintUsed = false;    // the current decision was revealed, so it isn't scored
+    let chartMode = loadChartPref(); // strategy chart shown beside the table; scoring paused
+    let roundInCooldown = false; // this round counts toward the post-chart scoring pause
+    let sideChartKey = null; // what the side chart last highlighted, to skip redundant redraws
 
     // ---------- Persistence ----------
     function loadStats() {
-      const fresh = { score: 0, best: 0, correct: 0, total: 0 };
+      const fresh = { ...FRESH_STATS };
       try { return { ...fresh, ...JSON.parse(localStorage.getItem(STATS_KEY)) }; } catch { return fresh; }
     }
     function saveStats() {
       try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch { /* storage unavailable */ }
+    }
+    function loadChartPref() {
+      try { return localStorage.getItem(CHART_KEY) === '1'; } catch { return false; }
+    }
+    function saveChartPref() {
+      try { localStorage.setItem(CHART_KEY, chartMode ? '1' : '0'); } catch { /* storage unavailable */ }
     }
     function loadBank() {
       try {
@@ -687,12 +793,20 @@
     function grade(action) {
       const best = optimalDecision();
       const correct = action === best.action;
-      const wasHinted = hintUsed;
+      const unscored = hintUsed ? 'you used a hint' : null;
       hintAction = null;
       hintUsed = false;
 
-      if (wasHinted) {
-        setFeedback(`${correct ? '✓' : '✗'} ${LABELS[action]} — not scored (you used a hint).`, 'hint');
+      if (chartMode || stats.pausedHands > 0) {
+        const tag = chartMode ? 'Practice: not scored' : 'Not scored: scoring is paused after viewing the chart';
+        setFeedback(correct
+          ? `✓ ${LABELS[action]} is correct: ${best.situation}. (${tag})`
+          : `✗ ${LABELS[action]} isn't optimal. Basic strategy says ${LABELS[best.action]}: ${best.situation}. (${tag})`,
+          correct ? 'good' : 'bad');
+        return;
+      }
+      if (unscored) {
+        setFeedback(`${correct ? '✓' : '✗'} ${LABELS[action]} — not scored (${unscored}).`, 'hint');
         return;
       }
       stats.total++;
@@ -747,9 +861,9 @@
       return { hit: 'H', stand: 'S', split: 'P', surrender: 'R' }[action];
     }
 
-    function buildChart() {
+    function buildChart(container) {
       const card = r => ({ r, s: '♠' });
-      els.chartTables.innerHTML = CHART.map(t => `
+      container.innerHTML = CHART.map(t => `
         <table class="chart" data-table="${t.id}">
           <caption>${t.title} <small>· dealer up card →</small></caption>
           <thead><tr><th></th>${UPCARDS.map(u => `<th scope="col" data-col="${u}">${u}</th>`).join('')}</tr></thead>
@@ -776,8 +890,7 @@
       return { table: 'hard', row: String(Math.min(17, Math.max(8, total))), col };
     }
 
-    function highlightChart(pos) {
-      const root = els.chartTables;
+    function highlightChart(root, pos) {
       root.querySelectorAll('.hl, .hl-axis, .hl-table, .in-line')
         .forEach(el => el.classList.remove('hl', 'hl-axis', 'hl-table', 'in-line'));
       root.classList.toggle('has-hl', !!pos);
@@ -795,28 +908,90 @@
       return cell;
     }
 
-    function openChart(best) {
+    // Writes "Your hand: … → [Best move]" into el, plus a note if the chart's first choice isn't allowed.
+    function describeSituation(el, best, cell) {
       const intro = phase === 'insurance' ? 'Insurance offered' : `Your hand: ${best.situation}`;
-      els.chartSituation.innerHTML = '';
-      els.chartSituation.append(`${intro} →`);
+      el.innerHTML = '';
+      el.append(`${intro} →`);
       const pill = document.createElement('span');
       pill.className = 'pill ' + ACTION_CLASS[best.action];
       pill.textContent = LABELS[best.action];
-      els.chartSituation.append(pill);
-      const cell = highlightChart(chartPosition());
+      el.append(pill);
       // e.g. the chart says Surrender, but surrender isn't allowed on a 3-card hand.
       const chartAction = cell && CODE_ACTION[cell.textContent[0]];
       if (chartAction && chartAction !== best.action) {
         const note = document.createElement('small');
         note.textContent = `The chart's first choice is ${LABELS[chartAction]}, but that isn't allowed here, so ${LABELS[best.action]}.`;
-        els.chartSituation.append(note);
+        el.append(note);
       }
+    }
+
+    function openChart(best) {
+      const cell = highlightChart(els.chartTables, chartPosition());
+      describeSituation(els.chartSituation, best, cell);
       els.chartDialog.showModal();
       if (cell) cell.scrollIntoView({ block: 'center', inline: 'center' });
     }
 
+    // Keeps the side chart's highlight in step with the current decision.
+    function updateSideChart() {
+      const deciding = phase === 'player' || phase === 'insurance';
+      const best = deciding ? optimalDecision() : null;
+      const pos = deciding ? chartPosition() : null;
+      const h = current();
+      const key = best
+        ? [phase, active, h && h.cards.length, pos && `${pos.table}/${pos.row}/${pos.col}`, best.action].join('|')
+        : phase === 'betting' ? 'betting' : 'waiting';
+      if (key === sideChartKey) return;
+      sideChartKey = key;
+
+      const cell = highlightChart(els.sideChartTables, pos);
+      if (best) describeSituation(els.sideSituation, best, cell);
+      else els.sideSituation.textContent = phase === 'betting'
+        ? 'Deal a hand and your situation will light up here.'
+        : 'Waiting for your next decision…';
+
+      // Scroll only inside the tables area (on wide screens it scrolls; on phones it doesn't, so the page stays put).
+      const box = els.sideChartTables;
+      if (cell && box.scrollHeight > box.clientHeight) {
+        const c = cell.getBoundingClientRect();
+        const b = box.getBoundingClientRect();
+        if (c.top < b.top + 40 || c.bottom > b.bottom - 40) {
+          box.scrollTop += c.top - b.top - (b.height - c.height) / 2;
+        }
+      }
+    }
+
+    // Why scoring is paused right now, or '' if it isn't.
+    function scoringPauseNote() {
+      if (chartMode) return 'Scoring is paused while the chart is showing.';
+      const left = stats.pausedHands;
+      if (left <= 0) return '';
+      const midRound = phase !== 'betting';
+      if (midRound && roundInCooldown) {
+        return left === 1 ? 'Scoring resumes after this hand.' : `Scoring resumes after this hand and ${left - 1} more.`;
+      }
+      if (midRound) return `Scoring resumes after this hand and ${left} more.`;
+      return `Scoring resumes after ${left} more complete hand${left === 1 ? '' : 's'}.`;
+    }
+
+    function toggleChart() {
+      if (els.chartDialog.open) return;
+      chartMode = !chartMode;
+      // Hiding the chart keeps scoring paused for the next two complete hands, so you can't
+      // glance at the answer and score straight away. A hand already in progress doesn't count.
+      if (!chartMode) {
+        stats.pausedHands = CHART_COOLDOWN_HANDS;
+        roundInCooldown = false;
+        saveStats();
+      }
+      sideChartKey = null;
+      saveChartPref();
+      render();
+    }
+
     function showHint() {
-      if (phase !== 'player' && phase !== 'insurance') return;
+      if (chartMode || (phase !== 'player' && phase !== 'insurance')) return;
       const best = optimalDecision();
       hintAction = best.action;
       hintUsed = true;
@@ -829,7 +1004,7 @@
 
     function resetStats() {
       if (!confirm('Reset your trainer score, best score and accuracy?')) return;
-      stats = { score: 0, best: 0, correct: 0, total: 0 };
+      stats = { ...FRESH_STATS };
       saveStats();
       setFeedback('');
       render();
@@ -938,11 +1113,22 @@
       els.accuracy.textContent = stats.total
         ? `${Math.round((stats.correct / stats.total) * 100)}% (${stats.correct}/${stats.total})` : '—';
       const deciding = phase === 'player' || phase === 'insurance';
-      els.hint.classList.toggle('hidden', !deciding);
+      els.hint.classList.toggle('hidden', !deciding || chartMode);
       els.hint.disabled = hintUsed;
       for (const [action, id] of Object.entries(ACTION_BUTTONS)) {
-        $(id).classList.toggle('hinted', deciding && hintAction === action);
+        $(id).classList.toggle('hinted', deciding && !chartMode && hintAction === action);
       }
+
+      document.body.classList.toggle('chart-mode', chartMode);
+      els.sideChart.classList.toggle('hidden', !chartMode);
+      const note = scoringPauseNote();
+      els.trainer.classList.toggle('paused', !!note);
+      els.trainer.setAttribute('aria-disabled', String(!!note));
+      els.trainerNote.classList.toggle('hidden', !note);
+      els.trainerNote.textContent = note;
+      els.chartToggle.setAttribute('aria-pressed', String(chartMode));
+      els.chartToggle.textContent = chartMode ? '📊 Hide strategy chart' : '📊 Show strategy chart';
+      if (chartMode) updateSideChart();
 
       els.shoe.textContent = `${shoe.length} cards left in shoe`;
     }
@@ -975,6 +1161,7 @@
       insurance = 0;
       insurancePaid = 0;
       holeHidden = true;
+      roundInCooldown = !chartMode && stats.pausedHands > 0;
       setMessage('');
 
       if (shoe.length < RESHUFFLE_AT) {
@@ -1175,6 +1362,12 @@
       bank += returned;
       saveBank();
 
+      if (roundInCooldown) {
+        roundInCooldown = false;
+        stats.pausedHands = Math.max(0, stats.pausedHands - 1);
+        saveStats();
+      }
+
       let msg;
       if (insurance && isNatural(hands[0])) {
         msg = `Even money — you win ${money(hands[0].bet)}.`;
@@ -1209,6 +1402,7 @@
     els.surrender.addEventListener('click', surrender);
     els.hint.addEventListener('click', showHint);
     els.resetStats.addEventListener('click', resetStats);
+    els.chartToggle.addEventListener('click', toggleChart);
     const closeChart = () => els.chartDialog.close();
     els.chartClose.addEventListener('click', closeChart);
     els.chartOk.addEventListener('click', closeChart);
@@ -1220,7 +1414,7 @@
       if (els.chartDialog.open) return; // the dialog handles its own keys (Esc closes it)
       const k = e.key.toLowerCase();
       const actions = {
-        h: hit, s: stand, d: doubleDown, p: split, r: surrender, b: showHint,
+        h: hit, s: stand, d: doubleDown, p: split, r: surrender, b: showHint, c: toggleChart,
         y: () => answerInsurance(true), n: () => answerInsurance(false),
       };
       if (k === 'enter' && phase === 'betting') { e.preventDefault(); deal(); }
@@ -1228,7 +1422,8 @@
     });
 
     buildShoe();
-    buildChart();
+    buildChart(els.chartTables);
+    buildChart(els.sideChartTables);
     if (bank < MIN_BET) setMessage('Out of chips!');
     render();
   })();
