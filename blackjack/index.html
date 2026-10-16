@@ -827,7 +827,7 @@
 
     // ---------- Strategy chart (generated from basicStrategy so it always matches the grader) ----------
     const UPCARDS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A'];
-    // [row key, row label, representative two-card hand]
+    // [row key, row label, representative two-card hand], listed low to high; drawn high to low.
     const CHART = [
       {
         id: 'hard', title: 'Hard totals',
@@ -867,7 +867,7 @@
         <table class="chart" data-table="${t.id}">
           <caption>${t.title} <small>· dealer up card →</small></caption>
           <thead><tr><th></th>${UPCARDS.map(u => `<th scope="col" data-col="${u}">${u}</th>`).join('')}</tr></thead>
-          <tbody>${t.rows.map(([key, label, ranks]) => `
+          <tbody>${[...t.rows].reverse().map(([key, label, ranks]) => `
             <tr data-row="${key}"><th scope="row">${label}</th>${UPCARDS.map(u => {
               const code = chartCode(ranks.map(card), card(u), t.id === 'pairs');
               return `<td class="c-${code[0]}" data-col="${u}">${code}</td>`;
